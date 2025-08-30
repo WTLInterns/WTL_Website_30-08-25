@@ -13,15 +13,16 @@ interface TimeSlot {
 
 declare global {
   interface Window {
-    initGoogleAutocomplete: () => void
-    google: {
-      maps: {
-        places: {
+    initGoogleAutocomplete?: () => void
+    google?: {
+      maps?: {
+        places?: {
           Autocomplete: new (
             inputField: HTMLInputElement,
             opts?: {
               componentRestrictions?: { country: string }
               types?: string[]
+              fields?: string[]
             },
           ) => {
             addListener: (eventName: string, callback: () => void) => void
@@ -31,6 +32,9 @@ declare global {
               address_components?: any[]
             }
           }
+        }
+        event?: {
+          clearInstanceListeners?: (instance: any) => void
         }
       }
     }
@@ -118,9 +122,41 @@ useEffect(() => {
   const dropRef = useRef<HTMLInputElement>(null)
   const pickupAutocompleteRef = useRef<any>(null)
   const dropAutocompleteRef = useRef<any>(null)
+  const isInitializedRef = useRef(false)
 
   const apiKey = "AIzaSyAKjmBSUJ3XR8uD10vG2ptzqLJAZnOlzqI"
   const today = new Date().toISOString().split("T")[0]
+
+  // Reset form to initial state
+  const resetForm = () => {
+    setTripType("oneWay")
+    setPickupLocation("")
+    setDropLocation("")
+    setPickupDate("")
+    setReturndate("")
+    setPickupTime("")
+    setError("")
+    setLocationError("")
+    setCalculatedDistance(null)
+    setUserName("")
+    setMobileNumber("")
+    setPackageName("")
+    setShowPopup(false)
+
+    // Clear input values directly
+    if (pickupRef.current) {
+      pickupRef.current.value = ""
+    }
+    if (dropRef.current) {
+      dropRef.current.value = ""
+    }
+
+    // Re-initialize autocomplete after clearing
+    setTimeout(() => {
+      cleanupAutocomplete()
+      initializeAutocomplete()
+    }, 100)
+  }
 
   // Check if place is in India
   const isPlaceInIndia = (place: any) => {
@@ -134,43 +170,91 @@ useEffect(() => {
     return false
   }
 
+  // Cleanup function for autocomplete instances
+  const cleanupAutocomplete = () => {
+    try {
+      if (pickupAutocompleteRef.current) {
+        // Try to clear listeners if the API is available
+        if (window.google?.maps?.event?.clearInstanceListeners) {
+          window.google.maps.event.clearInstanceListeners(pickupAutocompleteRef.current)
+        }
+        pickupAutocompleteRef.current = null
+      }
+      if (dropAutocompleteRef.current) {
+        // Try to clear listeners if the API is available
+        if (window.google?.maps?.event?.clearInstanceListeners) {
+          window.google.maps.event.clearInstanceListeners(dropAutocompleteRef.current)
+        }
+        dropAutocompleteRef.current = null
+      }
+      isInitializedRef.current = false
+    } catch (error) {
+      console.warn("Error during autocomplete cleanup:", error)
+      // Force reset refs even if cleanup fails
+      pickupAutocompleteRef.current = null
+      dropAutocompleteRef.current = null
+      isInitializedRef.current = false
+    }
+  }
+
   // Initialize Google Autocomplete
   const initializeAutocomplete = () => {
     if (typeof window !== "undefined" && window.google && window.google.maps && window.google.maps.places) {
-      if (pickupRef.current) {
-        pickupAutocompleteRef.current = new window.google.maps.places.Autocomplete(pickupRef.current, {
-          componentRestrictions: { country: "in" },
-          types: ["geocode", "establishment"],
-          fields: ["formatted_address", "name", "address_components"],
-        })
-        pickupAutocompleteRef.current.addListener("place_changed", () => {
-          const place = pickupAutocompleteRef.current.getPlace()
-          if (isPlaceInIndia(place)) {
-            setPickupLocation(place?.formatted_address || place?.name || "")
-            setLocationError("")
-          } else {
-            setPickupLocation("")
-            setLocationError("We currently only provide services within India")
-          }
-        })
+      // Prevent double initialization
+      if (isInitializedRef.current) {
+        return
       }
 
-      if (dropRef.current) {
-        dropAutocompleteRef.current = new window.google.maps.places.Autocomplete(dropRef.current, {
-          componentRestrictions: { country: "in" },
-          types: ["geocode", "establishment"],
-          fields: ["formatted_address", "name", "address_components"],
-        })
-        dropAutocompleteRef.current.addListener("place_changed", () => {
-          const place = dropAutocompleteRef.current.getPlace()
-          if (isPlaceInIndia(place)) {
-            setDropLocation(place?.formatted_address || place?.name || "")
-            setLocationError("")
-          } else {
-            setDropLocation("")
-            setLocationError("We currently only provide services within India")
-          }
-        })
+      // Clean up any existing instances first
+      cleanupAutocomplete()
+
+      if (pickupRef.current && !pickupAutocompleteRef.current) {
+        try {
+          pickupAutocompleteRef.current = new window.google.maps.places.Autocomplete(pickupRef.current, {
+            componentRestrictions: { country: "in" },
+            types: ["geocode", "establishment"],
+            fields: ["formatted_address", "name", "address_components"],
+          })
+          pickupAutocompleteRef.current.addListener("place_changed", () => {
+            const place = pickupAutocompleteRef.current?.getPlace()
+            if (place && isPlaceInIndia(place)) {
+              setPickupLocation(place?.formatted_address || place?.name || "")
+              setLocationError("")
+            } else {
+              setPickupLocation("")
+              setLocationError("We currently only provide services within India")
+            }
+          })
+        } catch (error) {
+          console.error("Error initializing pickup autocomplete:", error)
+        }
+      }
+
+      if (dropRef.current && !dropAutocompleteRef.current) {
+        try {
+          dropAutocompleteRef.current = new window.google.maps.places.Autocomplete(dropRef.current, {
+            componentRestrictions: { country: "in" },
+            types: ["geocode", "establishment"],
+            fields: ["formatted_address", "name", "address_components"],
+          })
+          dropAutocompleteRef.current.addListener("place_changed", () => {
+            const place = dropAutocompleteRef.current?.getPlace()
+            if (place && isPlaceInIndia(place)) {
+              setDropLocation(place?.formatted_address || place?.name || "")
+              setLocationError("")
+            } else {
+              setDropLocation("")
+              setLocationError("We currently only provide services within India")
+            }
+          })
+        } catch (error) {
+          console.error("Error initializing drop autocomplete:", error)
+        }
+      }
+
+      // Mark as initialized only if both autocomplete instances were created successfully
+      if (pickupAutocompleteRef.current && dropAutocompleteRef.current) {
+        isInitializedRef.current = true
       }
     }
   }
@@ -179,16 +263,97 @@ useEffect(() => {
   useEffect(() => {
     window.initGoogleAutocomplete = initializeAutocomplete
     return () => {
-      delete window.initGoogleAutocomplete
+      // Clean up autocomplete instances when component unmounts
+      cleanupAutocomplete()
+      if (window.initGoogleAutocomplete) {
+        window.initGoogleAutocomplete = undefined
+      }
     }
   }, [])
 
-  // Initialize when script loads
+  // Initialize when script loads or component mounts
   useEffect(() => {
     if (scriptLoaded) {
-      initializeAutocomplete()
+      // Add a small delay to ensure DOM elements are ready
+      const timeoutId = setTimeout(() => {
+        initializeAutocomplete()
+      }, 100)
+
+      return () => clearTimeout(timeoutId)
     }
   }, [scriptLoaded])
+
+  // Re-initialize autocomplete when refs change (component re-mount)
+  useEffect(() => {
+    if (scriptLoaded && pickupRef.current && dropRef.current) {
+      // Only re-initialize if we don't already have working autocomplete instances
+      if (!pickupAutocompleteRef.current || !dropAutocompleteRef.current) {
+        const timeoutId = setTimeout(() => {
+          initializeAutocomplete()
+        }, 100)
+
+        return () => clearTimeout(timeoutId)
+      }
+    }
+  }, [pickupRef.current, dropRef.current, scriptLoaded])
+
+  // Handle page visibility changes and navigation back to form
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && scriptLoaded) {
+        // Page became visible again, check if autocomplete needs re-initialization
+        setTimeout(() => {
+          if (pickupRef.current && dropRef.current) {
+            // Check if autocomplete is still working by testing if the instances exist and are functional
+            const needsReinit = !pickupAutocompleteRef.current || !dropAutocompleteRef.current
+            if (needsReinit) {
+              console.log("Re-initializing autocomplete after page visibility change")
+              initializeAutocomplete()
+            }
+          }
+        }, 200)
+      }
+    }
+
+    const handleFocus = () => {
+      if (scriptLoaded) {
+        // Window gained focus, ensure autocomplete is working
+        setTimeout(() => {
+          if (pickupRef.current && dropRef.current && (!pickupAutocompleteRef.current || !dropAutocompleteRef.current)) {
+            console.log("Re-initializing autocomplete after window focus")
+            initializeAutocomplete()
+          }
+        }, 200)
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    window.addEventListener('focus', handleFocus)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      window.removeEventListener('focus', handleFocus)
+    }
+  }, [scriptLoaded])
+
+  // Handle component mount/remount - ensure autocomplete is initialized
+  useEffect(() => {
+    if (scriptLoaded) {
+      // Check if we need to initialize autocomplete on mount
+      const checkAndInitialize = () => {
+        if (pickupRef.current && dropRef.current) {
+          if (!pickupAutocompleteRef.current || !dropAutocompleteRef.current || !isInitializedRef.current) {
+            console.log("Initializing autocomplete on component mount/remount")
+            initializeAutocomplete()
+          }
+        }
+      }
+
+      // Use a longer delay to ensure DOM is fully ready
+      const timeoutId = setTimeout(checkAndInitialize, 300)
+      return () => clearTimeout(timeoutId)
+    }
+  }, []) // Empty dependency array - only run on mount
 
   // Add custom styles for Google autocomplete dropdown
   useEffect(() => {
@@ -337,7 +502,7 @@ useEffect(() => {
     try {
       console.log("Calculating distance between:", origin, "and", destination)
 
-      const response = await fetch("http://localhost:8085/api/cab1", {
+      const response = await fetch("https://api.worldtriplink.com/api/cab1", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -559,6 +724,13 @@ useEffect(() => {
                   placeholder="Enter pickup location"
                   value={pickupLocation}
                   onChange={(e) => setPickupLocation(e.target.value)}
+                  onFocus={() => {
+                    // Check if autocomplete is working when user focuses on input
+                    if (scriptLoaded && !pickupAutocompleteRef.current) {
+                      console.log("Pickup input focused but no autocomplete - re-initializing")
+                      setTimeout(() => initializeAutocomplete(), 100)
+                    }
+                  }}
                   className="w-full p-3 pl-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/20 text-white placeholder-white/70"
                   required
                 />
@@ -593,6 +765,13 @@ useEffect(() => {
                   placeholder={tripType === "rental" ? "Enter drop location (optional)" : "Enter drop location"}
                   value={dropLocation}
                   onChange={(e) => setDropLocation(e.target.value)}
+                  onFocus={() => {
+                    // Check if autocomplete is working when user focuses on input
+                    if (scriptLoaded && !dropAutocompleteRef.current) {
+                      console.log("Drop input focused but no autocomplete - re-initializing")
+                      setTimeout(() => initializeAutocomplete(), 100)
+                    }
+                  }}
                   className="w-full p-3 pl-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/20 text-white placeholder-white/70"
                   required={tripType !== "rental"}
                 />
@@ -715,14 +894,34 @@ useEffect(() => {
           </div>
 
           {error && <div className="text-red-500 text-sm text-center">{error}</div>}
+          {locationError && <div className="text-red-500 text-sm text-center">{locationError}</div>}
 
-          <div className="flex justify-center mt-6">
+          <div className="flex justify-center mt-6 space-x-4">
             <button
               type="submit"
               className="bg-emerald-500 text-white px-12 py-3 rounded-lg text-lg font-medium hover:bg-emerald-600 transition-colors"
             >
               Search Available Cabs
             </button>
+            {/* Debug button - only show when autocomplete is actually broken */}
+            {process.env.NODE_ENV === 'development' &&
+             scriptLoaded &&
+             pickupRef.current &&
+             dropRef.current &&
+             (!pickupAutocompleteRef.current || !dropAutocompleteRef.current) && (
+              <button
+                type="button"
+                onClick={() => {
+                  console.log("Manual autocomplete re-initialization triggered")
+                  cleanupAutocomplete()
+                  setTimeout(() => initializeAutocomplete(), 100)
+                }}
+                className="bg-blue-500 text-white px-4 py-3 rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors"
+                title="Re-initialize autocomplete (dev only)"
+              >
+                🔄 Fix Autocomplete
+              </button>
+            )}
           </div>
         </div>
       </form>

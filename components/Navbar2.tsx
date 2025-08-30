@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
+import { usePathname } from 'next/navigation';
 
 // Define a more comprehensive user interface
 interface UserData {
@@ -24,6 +25,13 @@ const Navbar2 = () => {
   const [editedUser, setEditedUser] = useState<UserData | null>(null);
   const [showLogoutConfirmation, setShowLogoutConfirmation] = useState(false);
   const [showLogoutSuccess, setShowLogoutSuccess] = useState(false);
+
+// useEffect(()=>{
+//   const pathname = usePathname(); // Gets the path part of URL
+//     const serviceType = pathname.split('/corporate/')[1];
+//     console.log('Service Type:', serviceType);
+
+// })
 
   useEffect(() => {
     const handleScroll = () => {
@@ -79,8 +87,19 @@ const Navbar2 = () => {
       console.log('Loaded user data from individual localStorage items:', userData);
     }
   };
+
+
+  const pathname = usePathname();
+    
+    // useEffect(() => {
+    //     if (pathname.includes('/corporate/')) {
+    //         const serviceType = pathname.split('/corporate/')[1];
+    //         console.log('Service Type:', serviceType);
+    //     }
+    // }, [pathname]);
   
   // Function to handle logout
+  
   const handleLogout = () => {
     // Clear all user data from localStorage
     localStorage.removeItem('user');
@@ -137,6 +156,12 @@ const Navbar2 = () => {
     setIsEditMode(false);
     setEditedUser(null);
   };
+
+  //  useEffect(() => {
+  //       const pathname = usePathname(); // This won't work - hooks can't be called inside useEffect
+  //       const serviceType = pathname.split('/corporate/')[1];
+  //       console.log('Service Type:', serviceType);
+  //   }, []); 
   
   // Refresh user data when profile modal is opened
   useEffect(() => {
@@ -161,8 +186,11 @@ const Navbar2 = () => {
     { name: 'Service', href: '/service' },
     { name: 'Contact', href: '/contact' },
     ...(user?.isLoggedIn || user?.username 
-      ? [{ name: 'Logout', action: () => setShowLogoutConfirmation(true) }] 
-      : [{ name: 'Login', href: '/login' }]),
+      ? [{ name: 'Logout', action: () => setShowLogoutConfirmation(true) }]
+      : [
+          // { name: 'Corporate', href: '/corporate' },
+          { name: 'Login', href: '/login' },
+        ]),
   ];
 
   // User profile modal component

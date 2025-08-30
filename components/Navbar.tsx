@@ -9,6 +9,8 @@ import HotelBookingForm from '../components/HotelBookingForm'
 import FlightBookingForm from '../components/FlightBookingForm'
 import HolidayBookingForm from '../components/HolidayBookingForm'
 import HomestaysBookingForm from './HomestaysBookingForm'
+import InquiryPopup from './InquiryPopup'
+import InquiryForm from './InquiryForm'
 
 interface NavbarProps {
   onTabChange?: (tab: string) => void;
@@ -21,6 +23,22 @@ export default function Navbar({ onTabChange, disableForm = false }: NavbarProps
   const [showComingSoon, setShowComingSoon] = useState(false)
   const [comingSoonService, setComingSoonService] = useState('')
   const pathname = usePathname()
+  const [isInquiryOpen, setIsInquiryOpen] = useState(false)
+
+  // Corporate route detection and service name derivation
+  const isCorporatePage = pathname?.startsWith('/corporate/') || false
+  console.log(isCorporatePage)
+  const corporateSlug = isCorporatePage ? pathname.replace('/corporate/', '') : ''
+  const deriveServiceName = (slug: string) => {
+    if (!slug) return 'Corporate Enquiry'
+    const cleaned = slug.replace(/-/g, ' ')
+    const parts = slug.split('-')
+    if (parts.length <= 1) return cleaned
+    const city = parts[parts.length - 1]
+    const base = parts.slice(0, -1).join(' ')
+    return `${base} in ${city}`
+  }
+  const corporateServiceName = deriveServiceName(corporateSlug)
 
   // Check if we're on a page that already has a booking form
   useEffect(() => {
@@ -34,7 +52,8 @@ export default function Navbar({ onTabChange, disableForm = false }: NavbarProps
     { id: 'flights', label: 'Flights', icon: '✈️', component: FlightBookingForm },
     { id: 'hotels', label: 'Hotels', icon: '🏨', component: HotelBookingForm },
     { id: 'homestays', label: 'Homestays & Villas', icon: '🏠', component: HomestaysBookingForm },
-    { id: 'holiday', label: 'Holiday Packages', icon: '🌴', component: HolidayBookingForm }
+    { id: 'holiday', label: 'Holiday Packages', icon: '🌴', component: HolidayBookingForm },
+
   ]
 
   const handleTabClick = (tabId: string) => {
@@ -246,6 +265,17 @@ export default function Navbar({ onTabChange, disableForm = false }: NavbarProps
                 <span className="text-xs font-medium">{item.label}</span>
               </button>
             ))}
+
+            {isCorporatePage && (
+              <div className="ml-4">
+                <button
+                  onClick={() => setIsInquiryOpen(true)}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full text-sm font-medium hover:shadow-lg transition-all duration-300"
+                >
+                  Enquiry Now
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Mobile View */}
@@ -282,6 +312,15 @@ export default function Navbar({ onTabChange, disableForm = false }: NavbarProps
                     <span className="text-[10px] font-medium whitespace-nowrap">{item.label}</span>
                   </button>
                 ))}
+
+                {isCorporatePage && (
+                  <button
+                    onClick={() => setIsInquiryOpen(true)}
+                    className="px-4 py-2 text-[10px] font-medium whitespace-nowrap text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"
+                  >
+                    Enquiry Now
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -303,6 +342,16 @@ export default function Navbar({ onTabChange, disableForm = false }: NavbarProps
 
       {/* Coming Soon Modal */}
       <ComingSoonModal />
+
+      {/* Corporate enquiry modal */}
+      {isCorporatePage && (
+        <InquiryForm
+          isOpen={isInquiryOpen}
+          onClose={() => setIsInquiryOpen(false)}
+          serviceName={corporateServiceName}
+          serviceSlug={corporateSlug}
+        />
+      )}
     </div>
   )
 }

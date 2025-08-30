@@ -5,19 +5,19 @@ import MyTripClient from "././mytripClient"
 export const metadata: Metadata = {
   title: "My Trip | World Trip Link",
   description: "View and manage your booked trips with World Trip Link.",
-  metadataBase: new URL("https://worldtriplink.com"),
+  metadataBase: new URL("https://api.worldtriplink.com"),
   alternates: {
-    canonical: "https://worldtriplink.com/mytrip",
+    canonical: "https://api.worldtriplink.com/mytrip",
   },
   openGraph: {
     title: "My Trip - World Trip Link",
     description: "Access your trip details and manage your bookings easily.",
-    url: "https://worldtriplink.com/mytrip",
+    url: "https://api.worldtriplink.com/mytrip",
     siteName: "World Trip Link",
     type: "website",
     images: [
       {
-        url: "https://worldtriplink.com/images/og-image.jpg",
+        url: "https://api.worldtriplink.com/images/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "World Trip Link Trip Page",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     description: "Manage your bookings with World Trip Link.",
     site: "@worldtriplink",
     creator: "@worldtriplink",
-    images: ["https://worldtriplink.com/images/og-image.jpg"],
+    images: ["https://api.worldtriplink.com/images/og-image.jpg"],
   },
   robots: "index, follow",
 }

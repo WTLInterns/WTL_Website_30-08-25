@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://worldtriplink.com'
+  const baseUrl = 'https://api.worldtriplink.com'
 
   // Static pages
   const staticPages = [

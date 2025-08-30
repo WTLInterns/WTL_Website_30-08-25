@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import Cookies from "js-cookie";
@@ -105,8 +105,72 @@ function InvoiceContent() {
   const [bookingId, setBookingId] = useState("");
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
+  // Payment error state management
+  const [paymentError, setPaymentError] = useState("");
+  const [showPaymentError, setShowPaymentError] = useState(false);
+
+  // Audio ref for success sound
+  const successAudioRef = useRef<HTMLAudioElement | null>(null);
+
   // Razorpay public key from environment variables
   const razorpayKeyId = "rzp_test_ZzKJz2egIV36gC";
+
+  // Helper function to show payment error
+  const showPaymentErrorMessage = (message: string) => {
+    setPaymentError(message);
+    setShowPaymentError(true);
+    setTimeout(() => setShowPaymentError(false), 5000);
+  };
+
+  // Helper function to clear payment errors
+  const clearPaymentError = () => {
+    setPaymentError("");
+    setShowPaymentError(false);
+  };
+
+  // Function to create and play success sound using Web Audio API
+  const playSuccessSound = () => {
+    try {
+      // Create a pleasant success sound using Web Audio API
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+
+      // Create a sequence of pleasant tones (C major chord progression)
+      const frequencies = [523.25, 659.25, 783.99]; // C5, E5, G5
+      const duration = 0.3;
+
+      frequencies.forEach((freq, index) => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+        oscillator.type = 'sine';
+
+        // Create a pleasant envelope
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+
+        const startTime = audioContext.currentTime + (index * 0.15);
+        oscillator.start(startTime);
+        oscillator.stop(startTime + duration);
+      });
+
+    } catch (error) {
+      console.log("Could not play success sound:", error);
+      // Fallback: try to use a simple beep if Web Audio API fails
+      try {
+        if (successAudioRef.current) {
+          successAudioRef.current.currentTime = 0;
+          successAudioRef.current.play().catch(e => console.log("Fallback audio failed:", e));
+        }
+      } catch (fallbackError) {
+        console.log("Fallback audio also failed:", fallbackError);
+      }
+    }
+  };
 
   // Parse URL parameters on component mount
   useEffect(() => {
@@ -165,7 +229,7 @@ function InvoiceContent() {
     setIsSubmitting(true);
     try {
       const response = await fetch(
-        "http://localhost:8085/api/bookingConfirm",
+        "https://api.worldtriplink.com/api/bookingConfirm",
         {
           method: "POST",
           headers: {
@@ -188,6 +252,9 @@ function InvoiceContent() {
         setBookingId(data.bookingId);
         setBookingSuccess(true);
         setShowSuccessPopup(true);
+
+        // Play success sound
+        playSuccessSound();
 
         setTimeout(() => {
           setShowSuccessPopup(false);
@@ -246,8 +313,69 @@ function InvoiceContent() {
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
     document.body.appendChild(script);
+
+    // Add custom CSS for Razorpay modal styling
+    const style = document.createElement("style");
+    style.textContent = `
+      .razorpay-container {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+      }
+
+      .razorpay-checkout-frame {
+        border-radius: 12px !important;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+      }
+
+      .razorpay-container .header {
+        background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%) !important;
+        border-radius: 12px 12px 0 0 !important;
+      }
+
+      .razorpay-container .header .logo {
+        border-radius: 8px !important;
+        max-height: 40px !important;
+      }
+
+      .razorpay-container .methods {
+        background: #FAFBFC !important;
+      }
+
+      .razorpay-container .method {
+        border: 2px solid #E5E7EB !important;
+        border-radius: 8px !important;
+        margin: 8px !important;
+        transition: all 0.2s ease !important;
+      }
+
+      .razorpay-container .method:hover {
+        border-color: #3B82F6 !important;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15) !important;
+      }
+
+      .razorpay-container .method.focused {
+        border-color: #3B82F6 !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+      }
+
+      .razorpay-container .btn-primary {
+        background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%) !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        padding: 12px 24px !important;
+        transition: all 0.2s ease !important;
+      }
+
+      .razorpay-container .btn-primary:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3) !important;
+      }
+    `;
+    document.head.appendChild(style);
+
     return () => {
       document.body.removeChild(script);
+      document.head.removeChild(style);
     };
   }, []);
 
@@ -258,13 +386,16 @@ function InvoiceContent() {
     const phoneError = validatePhone(formData.phone);
     setFormErrors({ ...formErrors, phone: phoneError });
 
+    // Clear any existing payment errors
+    clearPaymentError();
+
     if (!formData.name || !formData.email || phoneError || !selectedPaymentMethod) {
-      alert("Please fill in all required fields and select a payment option.");
+      showPaymentErrorMessage("Please fill in all required fields and select a payment option.");
       return;
     }
 
     if (selectedPaymentMethod !== "Cash" && !paymentType) {
-      alert("Please select a payment type (Full or Partial).");
+      showPaymentErrorMessage("Please select a payment type (Full or Partial).");
       return;
     }
 
@@ -274,7 +405,7 @@ function InvoiceContent() {
     }
 
     if (!razorpayKeyId) {
-      alert("Razorpay key is not configured.");
+      showPaymentErrorMessage("Payment service is currently unavailable. Please try again later.");
       return;
     }
     
@@ -282,7 +413,7 @@ function InvoiceContent() {
     setIsSubmitting(true);
 
     try {
-      const orderResponse = await axios.post("http://localhost:8085/api/payments/create-razorpay-order", {
+      const orderResponse = await axios.post("https://api.worldtriplink.com/api/payments/create-razorpay-order", {
         amount: amountToPay,
       });
       
@@ -290,7 +421,7 @@ function InvoiceContent() {
 
       if (!keyId || !orderId) {
         console.error("Razorpay not configured properly.");
-        alert("Razorpay not configured properly. Please try again later.");
+        showPaymentErrorMessage("Payment service is currently unavailable. Please try again later.");
         setIsSubmitting(false);
         return;
       }
@@ -299,8 +430,9 @@ function InvoiceContent() {
         key: keyId,
         amount: amountToPay * 100,
         currency: "INR",
-        name: "WTL Cabs",
+        name: "World Trip Link Pvt. Ltd.",
         description: "Cab Booking Payment",
+        image: "/images/WTL_Logo.jpeg", // WTL Logo
         order_id: orderId,
         handler: async function (response: any) {
           const bookingData = new URLSearchParams({
@@ -344,15 +476,79 @@ function InvoiceContent() {
           email: formData.email,
           contact: formData.phone,
         },
+        config: {
+          display: {
+            blocks: {
+              banks: {
+                name: 'Pay using Net Banking',
+                instruments: [
+                  {
+                    method: 'netbanking'
+                  }
+                ]
+              },
+              other: {
+                name: 'Other Payment Methods',
+                instruments: [
+                  {
+                    method: 'card'
+                  },
+                  {
+                    method: 'upi'
+                  }
+                ]
+              }
+            },
+            hide: [
+              {
+                method: 'emi'
+              },
+              {
+                method: 'paylater'
+              },
+              {
+                method: 'wallet'
+              }
+            ],
+            sequence: ['block.banks', 'block.other'],
+            preferences: {
+              show_default_blocks: false
+            }
+          }
+        },
         theme: {
-          color: "#6366F1",
+          color: "#3B82F6", // Blue theme to match application
+          backdrop_color: "rgba(0, 0, 0, 0.6)",
+        },
+        modal: {
+          backdropclose: false, // Prevent accidental closure
+          escape: true,
+          handleback: true,
+          confirm_close: true,
+          ondismiss: function() {
+            showPaymentErrorMessage("Payment was cancelled. Please try again if you wish to complete the booking.");
+            setIsSubmitting(false);
+          }
         },
       };
 
       const razorpay = new (window as any).Razorpay(options);
+
+      // Log Razorpay configuration for testing
+      console.log("Razorpay initialized with options:", {
+        ...options,
+        key: "***hidden***" // Hide the actual key in logs
+      });
+
       razorpay.on("payment.failed", function (response: any) {
         console.error("Payment failed:", response.error);
-        alert(`Payment failed: ${response.error.description}`);
+        showPaymentErrorMessage("Payment failed. Please try again.");
+        setIsSubmitting(false);
+      });
+
+      razorpay.on("payment.cancelled", function () {
+        console.log("Payment cancelled by user");
+        showPaymentErrorMessage("Payment was cancelled. Please try again if you wish to complete the booking.");
         setIsSubmitting(false);
       });
 
@@ -360,7 +556,7 @@ function InvoiceContent() {
       // setIsSubmitting(false) is called inside the handlers
     } catch (error) {
       console.error("Failed to initiate payment:", error);
-      alert("Failed to initiate payment. Please try again.");
+      showPaymentErrorMessage("Payment failed. Please try again.");
       setIsSubmitting(false);
     }
   };
@@ -372,16 +568,58 @@ function InvoiceContent() {
         {/* Success Message */}
         {bookingSuccess && (
           <div
-            className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded relative mb-4"
+            className="bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-400 text-green-800 px-6 py-4 rounded-lg relative mb-6 shadow-lg"
             role="alert"
           >
-            <strong className="font-bold">Success!</strong>
-            <span className="block sm:inline">
-              {" "}
-              Your booking has been confirmed! Your booking ID is:{" "}
-              <strong>{bookingId}</strong>. An email has been sent with your
-              booking details. Redirecting to home page...
-            </span>
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <svg className="w-8 h-8 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <div className="flex items-center mb-2">
+                  <strong className="font-bold text-xl text-green-700">🎉 Congratulations!</strong>
+                </div>
+                <div className="text-green-700">
+                  <p className="font-semibold mb-1">Your cab booking has been confirmed successfully!</p>
+                  <p className="text-sm">
+                    <span className="font-medium">Booking ID:</span> <strong className="bg-green-200 px-2 py-1 rounded font-mono">{bookingId}</strong>
+                  </p>
+                  <p className="text-sm mt-2">
+                    📧 A confirmation email has been sent with your booking details.<br/>
+                    🚗 Get ready for your comfortable journey with World Trip Link!
+                  </p>
+                  <p className="text-xs mt-2 text-green-600">Redirecting to home page...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Payment Error Message */}
+        {showPaymentError && (
+          <div
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 flex items-center"
+            role="alert"
+          >
+            <div className="flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              <div>
+                <strong className="font-bold">Payment Error!</strong>
+                <span className="block sm:inline ml-1">{paymentError}</span>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowPaymentError(false)}
+              className="absolute top-0 bottom-0 right-0 px-4 py-3"
+            >
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
           </div>
         )}
 
@@ -814,6 +1052,7 @@ function InvoiceContent() {
                       onChange={(e) => {
                         setSelectedPaymentMethod(e.target.value);
                         setPaymentType("");
+                        clearPaymentError(); // Clear any existing payment errors
                       }}
                       className="hidden"
                       disabled={isSubmitting}
@@ -842,6 +1081,7 @@ function InvoiceContent() {
                       onChange={(e) => {
                         setSelectedPaymentMethod(e.target.value);
                         setPaymentType("full"); // Cash is always full payment
+                        clearPaymentError(); // Clear any existing payment errors
                       }}
                       className="hidden"
                       disabled={isSubmitting}

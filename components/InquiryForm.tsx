@@ -24,6 +24,8 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ isOpen, onClose, serviceName,
   const [submittedData, setSubmittedData] = useState<any>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -61,7 +63,7 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ isOpen, onClose, serviceName,
     try {
       // Call your backend API
       // You can configure the base URL here or use environment variables
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8085';
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.worldtriplink.com';
       const response = await fetch(`${API_BASE_URL}/create-enquiry`, {
         method: 'POST',
         headers: {
@@ -106,6 +108,8 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ isOpen, onClose, serviceName,
       }, 5000);
     }
   };
+
+  
 
   if (!isOpen) return null;
 

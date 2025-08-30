@@ -20,7 +20,7 @@ import Head from "next/head";
 {/* <Head>
 <title>Corporate Cab & Employee Transportation Services in Pune</title>
     <meta name="description" content="WTL Tourism Pvt. Ltd. offers reliable corporate cab services in Pune. Get safe, on-time employee transportation services tailored for your business needs."/>
-    <link rel="canonical" href="https://worldtriplink.com/corporate/Corporate-Cab-Service-Pune"/>
+    <link rel="canonical" href="https://api.worldtriplink.com/corporate/Corporate-Cab-Service-Pune"/>
     <meta name="author" content="WTL Tourism Pvt. Ltd."/>
     <meta name="keywords" content="corporate cab services in pune, corporate cab service in pune, corporate employee cab services in pune, corporate employee cab system in pune, uber cabs corporate office in pune, employee transportation services in pune, daily cab service in pune, corporate transport service"/>
     <meta name="robots" content="index, follow"/>
@@ -172,6 +172,18 @@ export default function PuneCorporateCabServicePage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar onTabChange={handleTabChange} disableForm={true} />
+
+        {/* Corporate quick actions nav - Enquiry Now */}
+        {/* <div className="bg-white shadow-md">
+          <div className="max-w-7xl mx-auto px-4 py-2 flex justify-center">
+            <button
+              onClick={handleInquiryClick}
+              className="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full text-sm font-semibold hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+            >
+              Enquiry Now
+            </button>
+          </div>
+        </div> */}
         
         {/* Hero Section with Background */}
         <div className="relative h-[550px] w-full">

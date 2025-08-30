@@ -16,6 +16,7 @@ export default function BusBookingForm() {
 
   const openDatePicker = (id: string) => {
     const dateInput = document.getElementById(id) as HTMLInputElement
+    
     if (dateInput) {
       try {
         if (typeof dateInput.showPicker === "function") {
