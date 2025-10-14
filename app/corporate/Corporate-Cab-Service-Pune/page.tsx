@@ -261,62 +261,62 @@ export default function PuneCorporateCabServicePage() {
           </section>
 
           {/* Why Choose Us Section */}
-          <section className="py-16 px-4 sm:px-6 lg:px-8 w-full mx-auto bg-gray-50">
+          <section className="py-8 sm:py-12 lg:py-16 px-2 sm:px-4 lg:px-8 w-full mx-auto bg-gray-50">
             <div className="w-full max-w-7xl mx-auto">
-              <h2 className="text-3xl font-bold text-gray-900 text-center mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-6 sm:mb-8">
                 Why Choose Our Corporate Cab Service in Pune?
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div className="group bg-white rounded-xl shadow-lg p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+                <div className="group bg-white rounded-xl shadow-lg p-4 sm:p-6 lg:p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
                   <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-full w-12 h-12 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                     <span className="text-white text-xl">✔</span>
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">Affordable Pricing</h3>
                   <p className="text-gray-600">Transparent rates with no hidden charges.</p>
                 </div>
-                <div className="group bg-white rounded-xl shadow-lg p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
+                <div className="group bg-white rounded-xl shadow-lg p-4 sm:p-6 lg:p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
                   <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-full w-12 h-12 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                     <span className="text-white text-xl">✔</span>
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors">Multiple Vehicle Options</h3>
                   <p className="text-gray-600">Choose from sedans, SUVs, tempo travelers, and luxury cabs.</p>
                 </div>
-                <div className="group bg-white rounded-xl shadow-lg p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
+                <div className="group bg-white rounded-xl shadow-lg p-4 sm:p-6 lg:p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
                   <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-full w-12 h-12 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                     <span className="text-white text-xl">✔</span>
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-green-600 transition-colors">Punctual & Reliable</h3>
                   <p className="text-gray-600">Guaranteed on-time pickups and drop-offs.</p>
                 </div>
-                <div className="group bg-white rounded-xl shadow-lg p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
+                <div className="group bg-white rounded-xl shadow-lg p-4 sm:p-6 lg:p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
                   <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-full w-12 h-12 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                     <span className="text-white text-xl">✔</span>
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-amber-600 transition-colors">Experienced Chauffeurs</h3>
                   <p className="text-gray-600">Trained, verified, and professional drivers.</p>
                 </div>
-                <div className="group bg-white rounded-xl shadow-lg p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
+                <div className="group bg-white rounded-xl shadow-lg p-4 sm:p-6 lg:p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
                   <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-full w-12 h-12 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                     <span className="text-white text-xl">✔</span>
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-red-600 transition-colors">24/7 Availability</h3>
                   <p className="text-gray-600">Flexible bookings for corporate employees.</p>
                 </div>
-                <div className="group bg-white rounded-xl shadow-lg p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
+                <div className="group bg-white rounded-xl shadow-lg p-4 sm:p-6 lg:p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
                   <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-full w-12 h-12 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                     <span className="text-white text-xl">✔</span>
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-indigo-600 transition-colors">Safety & Hygiene</h3>
                   <p className="text-gray-600">Well-maintained and sanitized vehicles.</p>
                 </div>
-                <div className="group bg-white rounded-xl shadow-lg p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
+                <div className="group bg-white rounded-xl shadow-lg p-4 sm:p-6 lg:p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
                   <div className="bg-gradient-to-br from-teal-500 to-teal-600 rounded-full w-12 h-12 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                     <span className="text-white text-xl">✔</span>
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-teal-600 transition-colors">Custom Corporate Plans</h3>
                   <p className="text-gray-600">Tailored cab solutions based on company requirements.</p>
                 </div>
-                <div className="group bg-white rounded-xl shadow-lg p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
+                <div className="group bg-white rounded-xl shadow-lg p-4 sm:p-6 lg:p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
                   <div className="bg-gradient-to-br from-pink-500 to-pink-600 rounded-full w-12 h-12 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                     <span className="text-white text-xl">✔</span>
                   </div>
@@ -328,19 +328,19 @@ export default function PuneCorporateCabServicePage() {
           </section>
 
           {/* Corporate Employee Transport Services Section */}
-          <section className="py-16 px-4 sm:px-6 lg:px-8 w-full mx-auto bg-gradient-to-br from-blue-50 via-white to-purple-50">
+          <section className="py-8 sm:py-12 lg:py-16 px-2 sm:px-4 lg:px-8 w-full mx-auto bg-gradient-to-br from-blue-50 via-white to-purple-50">
             <div className="w-full max-w-7xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 relative inline-block">
+              <div className="text-center mb-8 sm:mb-12">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 sm:mb-6 relative inline-block">
                   Corporate Employee Cab Services in Pune
                   <div className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
                 </h2>
-                <p className="text-xl text-gray-600">
+                <p className="text-lg sm:text-xl text-gray-600">
                   For companies looking to optimize employee transportation, our corporate employee cab services in Pune ensure smooth travel for staff. We offer dedicated corporate transport solutions to help businesses improve employee productivity and reduce commute stress.
                 </p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="group bg-white rounded-2xl shadow-xl p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+                <div className="group bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
                   <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 w-12 h-12 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                     <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -349,7 +349,7 @@ export default function PuneCorporateCabServicePage() {
                   <h3 className="text-xl font-semibold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors">Hassle-free Daily Commutes</h3>
                   <p className="text-gray-600">Well-planned routes for efficient employee transportation.</p>
                 </div>
-                <div className="group bg-white rounded-2xl shadow-xl p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
+                <div className="group bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
                   <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 w-12 h-12 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                     <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -358,7 +358,7 @@ export default function PuneCorporateCabServicePage() {
                   <h3 className="text-xl font-semibold text-gray-900 mb-4 group-hover:text-purple-600 transition-colors">Cost-effective Solutions</h3>
                   <p className="text-gray-600">Affordable corporate cab subscriptions for businesses.</p>
                 </div>
-                <div className="group bg-white rounded-2xl shadow-xl p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
+                <div className="group bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
                   <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 w-12 h-12 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                     <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -367,7 +367,7 @@ export default function PuneCorporateCabServicePage() {
                   <h3 className="text-xl font-semibold text-gray-900 mb-4 group-hover:text-green-600 transition-colors">Real-time Tracking</h3>
                   <p className="text-gray-600">Advanced safety features with GPS tracking.</p>
                 </div>
-                <div className="group bg-white rounded-2xl shadow-xl p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
+                <div className="group bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 border border-gray-100 hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
                   <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl p-4 w-12 h-12 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                     <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -381,18 +381,18 @@ export default function PuneCorporateCabServicePage() {
           </section>
 
           {/* Corporate Employee Cab System Section */}
-          <section className="py-16 px-4 sm:px-6 lg:px-8 w-full mx-auto bg-gradient-to-br from-blue-600 to-purple-700 text-white">
+          <section className="py-8 sm:py-12 lg:py-16 px-2 sm:px-4 lg:px-8 w-full mx-auto bg-gradient-to-br from-blue-600 to-purple-700 text-white">
             <div className="w-full max-w-7xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold mb-6 relative inline-block">
+              <div className="text-center mb-8 sm:mb-12">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 relative inline-block">
                   Corporate Employee Cab System in Pune
                   <div className="absolute -bottom-2 left-0 w-full h-1 bg-white"></div>
                 </h2>
-                <p className="text-xl text-blue-100">
+                <p className="text-lg sm:text-xl text-blue-100">
                   Our corporate employee cab system in Pune is designed to provide seamless transportation solutions for businesses of all sizes.
                 </p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                 <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
                   <div className="flex items-center mb-4">
                     <div className="bg-white/20 rounded-full p-3 mr-4">
@@ -431,19 +431,19 @@ export default function PuneCorporateCabServicePage() {
           </section>
 
           {/* Daily Cab Service Section */}
-          <section className="py-16 px-4 sm:px-6 lg:px-8 w-full mx-auto bg-gray-50">
+          <section className="py-8 sm:py-12 lg:py-16 px-2 sm:px-4 lg:px-8 w-full mx-auto bg-gray-50">
             <div className="w-full max-w-7xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 relative inline-block">
+              <div className="text-center mb-8 sm:mb-12">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 sm:mb-6 relative inline-block">
                   Daily Cab Service in Pune
                   <div className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
                 </h2>
-                <p className="text-xl text-gray-600">
+                <p className="text-lg sm:text-xl text-gray-600">
                   Our daily cab service in Pune ensures reliable and comfortable transportation for your employees every day.
                 </p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+                <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                   <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-4 w-12 h-12 flex items-center justify-center mb-4">
                     <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -452,7 +452,7 @@ export default function PuneCorporateCabServicePage() {
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Regular Pickups</h3>
                   <p className="text-gray-600">Scheduled pickups from designated locations.</p>
                 </div>
-                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+                <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                   <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg p-4 w-12 h-12 flex items-center justify-center mb-4">
                     <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -461,7 +461,7 @@ export default function PuneCorporateCabServicePage() {
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Flexible Routes</h3>
                   <p className="text-gray-600">Customizable routes based on employee locations.</p>
                 </div>
-                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+                <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                   <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg p-4 w-12 h-12 flex items-center justify-center mb-4">
                     <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -471,7 +471,7 @@ export default function PuneCorporateCabServicePage() {
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Multiple Stops</h3>
                   <p className="text-gray-600">Efficient multi-stop pickup service.</p>
                 </div>
-                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+                <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                   <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-lg p-4 w-12 h-12 flex items-center justify-center mb-4">
                     <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -485,93 +485,93 @@ export default function PuneCorporateCabServicePage() {
           </section>
 
           {/* Pricing Section */}
-          <section className="py-16 px-4 sm:px-6 lg:px-8 w-full mx-auto bg-gradient-to-br from-gray-50 to-blue-50">
+          <section className="py-8 sm:py-12 lg:py-16 px-2 sm:px-4 lg:px-8 w-full mx-auto bg-gradient-to-br from-gray-50 to-blue-50">
             <div className="w-full max-w-7xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 relative inline-block">
+              <div className="text-center mb-8 sm:mb-12">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 sm:mb-6 relative inline-block">
                   Corporate Transport Service – Route-wise Pricing & Cab Options
                   <div className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
                 </h2>
-                <p className="text-xl text-gray-600">
+                <p className="text-lg sm:text-xl text-gray-600">
                   Transparent and competitive pricing for all your corporate transportation needs
                 </p>
               </div>
               <div className="overflow-x-auto rounded-lg shadow-lg">
-                <table className="min-w-full bg-white">
+                <table className="min-w-full bg-white text-sm sm:text-base">
                   <thead>
                     <tr className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-                      <th className="py-4 px-6 text-left">Route</th>
-                      <th className="py-4 px-6 text-left">Distance (KM)</th>
-                      <th className="py-4 px-6 text-left">Hatchback</th>
-                      <th className="py-4 px-6 text-left">Sedan</th>
-                      <th className="py-4 px-6 text-left">SUV</th>
-                      <th className="py-4 px-6 text-left">Tempo Traveler</th>
+                      <th className="py-3 sm:py-4 px-2 sm:px-6 text-left text-xs sm:text-sm">Route</th>
+                      <th className="py-3 sm:py-4 px-2 sm:px-6 text-left text-xs sm:text-sm">Distance (KM)</th>
+                      <th className="py-3 sm:py-4 px-2 sm:px-6 text-left text-xs sm:text-sm">Hatchback</th>
+                      <th className="py-3 sm:py-4 px-2 sm:px-6 text-left text-xs sm:text-sm">Sedan</th>
+                      <th className="py-3 sm:py-4 px-2 sm:px-6 text-left text-xs sm:text-sm">SUV</th>
+                      <th className="py-3 sm:py-4 px-2 sm:px-6 text-left text-xs sm:text-sm">Tempo Traveler</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr className="border-b hover:bg-gray-50 transition-colors duration-150">
-                      <td className="py-4 px-6">Pune to Hinjewadi</td>
-                      <td className="py-4 px-6">20 km</td>
-                      <td className="py-4 px-6">₹450</td>
-                      <td className="py-4 px-6">₹600</td>
-                      <td className="py-4 px-6">₹900</td>
-                      <td className="py-4 px-6">₹1500</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">Pune to Hinjewadi</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">20 km</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹450</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹600</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹900</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹1500</td>
                     </tr>
                     <tr className="border-b hover:bg-gray-50 transition-colors duration-150">
-                      <td className="py-4 px-6">Pune to Magarpatta</td>
-                      <td className="py-4 px-6">15 km</td>
-                      <td className="py-4 px-6">₹400</td>
-                      <td className="py-4 px-6">₹550</td>
-                      <td className="py-4 px-6">₹850</td>
-                      <td className="py-4 px-6">₹1400</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">Pune to Magarpatta</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">15 km</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹400</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹550</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹850</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹1400</td>
                     </tr>
                     <tr className="border-b hover:bg-gray-50 transition-colors duration-150">
-                      <td className="py-4 px-6">Pune to Baner</td>
-                      <td className="py-4 px-6">18 km</td>
-                      <td className="py-4 px-6">₹430</td>
-                      <td className="py-4 px-6">₹580</td>
-                      <td className="py-4 px-6">₹880</td>
-                      <td className="py-4 px-6">₹1450</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">Pune to Baner</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">18 km</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹430</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹580</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹880</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹1450</td>
                     </tr>
                     <tr className="border-b hover:bg-gray-50 transition-colors duration-150">
-                      <td className="py-4 px-6">Pune to Kharadi</td>
-                      <td className="py-4 px-6">12 km</td>
-                      <td className="py-4 px-6">₹350</td>
-                      <td className="py-4 px-6">₹500</td>
-                      <td className="py-4 px-6">₹800</td>
-                      <td className="py-4 px-6">₹1350</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">Pune to Kharadi</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">12 km</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹350</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹500</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹800</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹1350</td>
                     </tr>
                     <tr className="border-b hover:bg-gray-50 transition-colors duration-150">
-                      <td className="py-4 px-6">Pune to Viman Nagar</td>
-                      <td className="py-4 px-6">10 km</td>
-                      <td className="py-4 px-6">₹300</td>
-                      <td className="py-4 px-6">₹450</td>
-                      <td className="py-4 px-6">₹750</td>
-                      <td className="py-4 px-6">₹1250</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">Pune to Viman Nagar</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">10 km</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹300</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹450</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹750</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹1250</td>
                     </tr>
                     <tr className="border-b hover:bg-gray-50 transition-colors duration-150">
-                      <td className="py-4 px-6">Pune to Pimpri-Chinchwad</td>
-                      <td className="py-4 px-6">22 km</td>
-                      <td className="py-4 px-6">₹500</td>
-                      <td className="py-4 px-6">₹650</td>
-                      <td className="py-4 px-6">₹950</td>
-                      <td className="py-4 px-6">₹1550</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">Pune to Pimpri-Chinchwad</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">22 km</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹500</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹650</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹950</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹1550</td>
                     </tr>
                     <tr className="border-b hover:bg-gray-50 transition-colors duration-150">
-                      <td className="py-4 px-6">Pune to Chakan</td>
-                      <td className="py-4 px-6">30 km</td>
-                      <td className="py-4 px-6">₹650</td>
-                      <td className="py-4 px-6">₹800</td>
-                      <td className="py-4 px-6">₹1100</td>
-                      <td className="py-4 px-6">₹1800</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">Pune to Chakan</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">30 km</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹650</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹800</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹1100</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹1800</td>
                     </tr>
                     <tr className="hover:bg-gray-50 transition-colors duration-150">
-                      <td className="py-4 px-6">Pune to Talegaon</td>
-                      <td className="py-4 px-6">35 km</td>
-                      <td className="py-4 px-6">₹700</td>
-                      <td className="py-4 px-6">₹850</td>
-                      <td className="py-4 px-6">₹1200</td>
-                      <td className="py-4 px-6">₹1900</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">Pune to Talegaon</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">35 km</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹700</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹850</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹1200</td>
+                      <td className="py-3 sm:py-4 px-2 sm:px-6 text-xs sm:text-sm">₹1900</td>
                     </tr>
                   </tbody>
                 </table>
@@ -580,14 +580,14 @@ export default function PuneCorporateCabServicePage() {
           </section>
 
           {/* FAQ Section */}
-          <section className="py-16 px-4 sm:px-6 lg:px-8 w-full mx-auto bg-white">
+          <section className="py-8 sm:py-12 lg:py-16 px-2 sm:px-4 lg:px-8 w-full mx-auto bg-white">
             <div className="w-full max-w-7xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 relative inline-block">
+              <div className="text-center mb-8 sm:mb-12">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 sm:mb-6 relative inline-block">
                   Frequently Asked Questions
                   <div className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
                 </h2>
-                <p className="text-xl text-gray-600">
+                <p className="text-lg sm:text-xl text-gray-600">
                   Find answers to common questions about our corporate cab services in Pune
                 </p>
               </div>

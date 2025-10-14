@@ -68,12 +68,37 @@ export default function MyTripPage() {
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        // Replace 52 with the actual user ID from your authentication system
-        // const userId = 52; // This should come from your auth context or session
-        const userId = localStorage.getItem('userId');
-        const id = Cookies.get('userId');
-        console.log(",sfdfds",id)
-        const response = await fetch(`https://api.worldtriplink.com/api/by-user/${id}`);
+        // Resolve userId from multiple sources so we don't depend on a single cookie
+        const cookieUserId = Cookies.get('userId') || Cookies.get('userid') || Cookies.get('userID') || null;
+        const lsUserId = typeof window !== 'undefined' ? localStorage.getItem('userId') : null;
+        let blobUserId: string | null = null;
+        try {
+          const cookieUser = Cookies.get('user');
+          const lsUser = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+          const parsed = cookieUser ? JSON.parse(cookieUser) : (lsUser ? JSON.parse(lsUser) : null);
+          // Try common shapes: userId, id, user.id
+          blobUserId = parsed?.userId
+            ? String(parsed.userId)
+            : (parsed?.id
+              ? String(parsed.id)
+              : (parsed?.user?.id ? String(parsed.user.id) : null));
+
+          // Debug: surface where the ID is coming from
+          console.debug('[MyTrip] cookieUserId:', cookieUserId);
+          console.debug('[MyTrip] lsUserId:', lsUserId);
+          console.debug('[MyTrip] blobUserId:', blobUserId);
+        } catch (_) {
+          blobUserId = null;
+        }
+
+        const id = cookieUserId || lsUserId || blobUserId;
+        if (!id) {
+          setError('You must be logged in to view your trips. (No userId found in cookies/localStorage)');
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch(`https://api.worldtriplink.com/api/bookings/by-user/${id}`);
         
         if (!response.ok) {
           throw new Error('Failed to fetch trips');

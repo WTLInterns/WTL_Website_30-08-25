@@ -8,9 +8,13 @@ interface DestinationCardProps {
   rating: number
   reviews: number
   imageSrc: string
+  // Optional link to navigate when the card is clicked
+  href?: string
+  // Optional list of sub-destinations to show like "To: *A *B *C"
+  subDestinations?: string[]
 }
 
-export default function DestinationCard({ city, tag, description, rating, reviews, imageSrc }: DestinationCardProps) {
+export default function DestinationCard({ city, tag, description, rating, reviews, imageSrc, href, subDestinations }: DestinationCardProps) {
   // Generate stars based on rating
   const renderStars = () => {
     const stars = []
@@ -83,6 +87,54 @@ export default function DestinationCard({ city, tag, description, rating, review
     }
 
     return stars
+  }
+
+  // Two layouts:
+  // 1) If href or subDestinations provided, render compact horizontal card (matches reference screenshot)
+  // 2) Otherwise, fall back to previous full-image overlay style (backward compatible)
+
+  if (href || (subDestinations && subDestinations.length > 0)) {
+    return (
+      <Link
+        href={href || "#"}
+        className="flex items-center gap-4 bg-white/90 backdrop-blur-sm rounded-xl p-4 hover:shadow-lg transition-shadow duration-200"
+      >
+        {/* Thumbnail (native img for robust fallback) */}
+        <img
+          src={imageSrc || "/placeholder.jpg"}
+          alt={city}
+          width={96}
+          height={80}
+          className="rounded-lg object-cover shrink-0"
+          onError={(e) => {
+            const target = e.currentTarget as HTMLImageElement
+            if (target.src.endsWith("placeholder.jpg")) return
+            target.src = "/placeholder.jpg"
+          }}
+        />
+
+        {/* Content */}
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <h3 className="text-lg font-semibold text-gray-900 truncate">{city}</h3>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 whitespace-nowrap">{tag}</span>
+          </div>
+          {subDestinations && subDestinations.length > 0 ? (
+            <p className="text-sm text-indigo-600/90 truncate">
+              <span className="text-gray-500 mr-1">To:</span>
+              {subDestinations.map((d, idx) => (
+                <span key={idx} className="">
+                  {idx > 0 && <span className="text-gray-400"> • </span>}
+                  <span className="hover:underline">{d}</span>
+                </span>
+              ))}
+            </p>
+          ) : (
+            <p className="text-sm text-gray-600 line-clamp-2">{description}</p>
+          )}
+        </div>
+      </Link>
+    )
   }
 
   return (

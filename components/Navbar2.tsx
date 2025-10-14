@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import InquiryPopup from "./InquiryPopup";
 import Link from 'next/link';
 import Cookies from 'js-cookie';
 import { usePathname } from 'next/navigation';
@@ -25,6 +26,8 @@ const Navbar2 = () => {
   const [editedUser, setEditedUser] = useState<UserData | null>(null);
   const [showLogoutConfirmation, setShowLogoutConfirmation] = useState(false);
   const [showLogoutSuccess, setShowLogoutSuccess] = useState(false);
+  const [showInquiry, setShowInquiry] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
 // useEffect(()=>{
 //   const pathname = usePathname(); // Gets the path part of URL
@@ -36,6 +39,7 @@ const Navbar2 = () => {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
+      setShowScrollTop(window.scrollY > 300); // Show scroll-to-top after scrolling 300px
     };
     window.addEventListener('scroll', handleScroll);
     
@@ -116,6 +120,11 @@ const Navbar2 = () => {
     setShowLogoutConfirmation(false);
     setShowLogoutSuccess(true);
     
+    // Auto-dismiss toast after 3 seconds
+    setTimeout(() => {
+      setShowLogoutSuccess(false);
+    }, 3000);
+    
     // Redirect to home page after a short delay
     setTimeout(() => {
       window.location.href = '/';
@@ -157,6 +166,14 @@ const Navbar2 = () => {
     setEditedUser(null);
   };
 
+  // Function to scroll to top
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
   //  useEffect(() => {
   //       const pathname = usePathname(); // This won't work - hooks can't be called inside useEffect
   //       const serviceType = pathname.split('/corporate/')[1];
@@ -179,18 +196,16 @@ const Navbar2 = () => {
   }, [showProfileModal]);
 
   // Navigation items - dynamic based on login status
+  const isLoggedIn = Boolean(user?.isLoggedIn || user?.username);
   const navItems = [
-    { name: 'Home', href: '/' },
-    { name: 'My Trip', href: '/my-trip' },
+    // { name: 'Home', href: '/' },
+    ...(isLoggedIn ? [{ name: 'My Trip', href: '/my-trip' }] as const : []),
     { name: 'About', href: '/about' },
     { name: 'Service', href: '/service' },
     { name: 'Contact', href: '/contact' },
-    ...(user?.isLoggedIn || user?.username 
+    ...(isLoggedIn
       ? [{ name: 'Logout', action: () => setShowLogoutConfirmation(true) }]
-      : [
-          // { name: 'Corporate', href: '/corporate' },
-          { name: 'Login', href: '/login' },
-        ]),
+      : []),
   ];
 
   // User profile modal component
@@ -198,7 +213,7 @@ const Navbar2 = () => {
     if (!showProfileModal) return null;
     
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={handleProfileModalClose}>
+      <div className="fixed inset-0 z-[9998] flex items-center justify-center" onClick={handleProfileModalClose}>
         {/* Backdrop */}
         <div 
           className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ease-in-out"
@@ -425,7 +440,7 @@ const Navbar2 = () => {
     if (!showLogoutConfirmation) return null;
     
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => setShowLogoutConfirmation(false)}>
+      <div className="fixed inset-0 z-[9998] flex items-center justify-center" onClick={() => setShowLogoutConfirmation(false)}>
         {/* Backdrop */}
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ease-in-out"></div>
         
@@ -478,36 +493,52 @@ const Navbar2 = () => {
     if (!showLogoutSuccess) return null;
     
     return (
-      <div className="fixed top-4 right-4 z-50 transform transition-all duration-500 ease-in-out animate-fade-in-down">
-        <div className="bg-green-500 text-white p-4 rounded-lg shadow-lg flex items-center space-x-3 min-w-[300px]">
-          <div className="bg-white/20 rounded-full p-2">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
+      <div className="fixed top-0 right-4 z-[9998] transform transition-all duration-700 ease-out animate-slide-down">
+        <div className="bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 text-white p-5 rounded-2xl shadow-2xl flex items-center space-x-4 min-w-[350px] max-w-[400px] backdrop-blur-sm border border-white/20 relative overflow-hidden">
+          {/* Animated background pattern */}
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/20 to-teal-400/20 animate-pulse"></div>
+          
+          {/* Success icon with animation */}
+          <div className="relative bg-white/25 rounded-full p-3 animate-bounce">
+            <div className="bg-white/20 rounded-full p-1">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
           </div>
-          <div>
-            <h3 className="font-medium">Success!</h3>
-            <p className="text-sm text-white/90">You have been logged out successfully.</p>
+          
+          {/* Content */}
+          <div className="flex-1 relative">
+            <h3 className="font-bold text-lg mb-1 tracking-wide">Logout Successful! 🎉</h3>
+            <p className="text-sm text-white/95 font-medium">You have been securely logged out. See you soon!</p>
           </div>
+          
+          {/* Close button with hover effects */}
           <button 
             onClick={() => setShowLogoutSuccess(false)}
-            className="ml-auto bg-transparent text-white p-1 rounded-full hover:bg-white/20 transition-colors"
+            className="relative ml-auto bg-white/10 hover:bg-white/25 text-white p-2 rounded-full transition-all duration-300 hover:scale-110 hover:rotate-90 group"
+            title="Close notification"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 group-hover:scale-110 transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
             </svg>
           </button>
+          
+          {/* Progress bar animation */}
+          <div className="absolute bottom-0 left-0 h-1 bg-white/30 w-full">
+            <div className="h-full bg-white/60 animate-progress-bar origin-left"></div>
+          </div>
         </div>
       </div>
     );
   };
 
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-white shadow-lg' : 'bg-transparent'
+    <nav className={`fixed top-0 left-0 right-0 w-full z-[9999] transition-all duration-300 ${
+      isScrolled ? 'bg-white' : 'bg-transparent'
     }`}>
       <div className="w-full px-2 sm:px-4">
-        <div className="flex justify-start items-center h-16">
+        <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0 animate-fade-in pl-1 sm:pl-2">
             <Link href="/" className="flex items-center text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -522,7 +553,7 @@ const Navbar2 = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8 ml-auto">
+          <div className="hidden md:flex items-center space-x-4">
             {navItems.map((item) => (
               <div
                 key={item.name}
@@ -550,16 +581,37 @@ const Navbar2 = () => {
               </div>
             ))}
             
-            {/* Sign Up button for non-logged in users */}
+            {/* Auth + Inquiry buttons for non-logged in users */}
             {!user?.isLoggedIn && !user?.username && (
-              <div className="transform transition-all duration-200 hover:scale-105 active:scale-95">
-                <Link
-                  href="/Register"
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full text-sm font-medium hover:shadow-lg transition-all duration-300"
-                >
-                  Sign Up
-                </Link>
-              </div>
+              <>
+                <div className="flex items-center space-x-3">
+                  <Link
+                    href="/login"
+                    className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-5 py-2 rounded-full text-sm font-medium shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-2"
+                    title="Login or Create Account"
+                  >
+                    <span>Login or Create Account</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 011.08 1.04l-4.25 4.25a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+                    </svg>
+                  </Link>
+                  <button
+                    className="bg-blue-600 hover:bg-purple-600 text-white px-5 py-2 rounded-full text-sm font-medium shadow-md transition-all duration-300 transform hover:scale-105 active:scale-95"
+                    onClick={() => setShowInquiry(true)}
+                  >
+                    Inquiry
+                  </button>
+                </div>
+                {/* InquiryPopup modal */}
+                {showInquiry && (
+                  <InquiryPopup
+                    serviceName="Navbar Inquiry"
+                    serviceSlug="navbar-inquiry"
+                    isOpen={true}
+                    onClose={() => setShowInquiry(false)}
+                  />
+                )}
+              </>
             )}
             
             {/* Welcome message with user avatar - modified to be clickable */}
@@ -581,7 +633,7 @@ const Navbar2 = () => {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden ml-auto">
+          <div className="md:hidden">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className={`p-2 rounded-md transition-colors duration-200 ${
@@ -689,6 +741,19 @@ const Navbar2 = () => {
       
       {/* Render the logout success toast */}
       <LogoutSuccessToast />
+      
+      {/* Scroll to Top Button */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 z-[9997] bg-gradient-to-r from-blue-600 to-purple-600 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 animate-bounce"
+          title="Scroll to top"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+          </svg>
+        </button>
+      )}
     </nav>
   );
 };

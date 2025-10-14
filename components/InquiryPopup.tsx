@@ -6,27 +6,34 @@ import InquiryForm from "./InquiryForm";
 interface InquiryPopupProps {
   serviceName: string;
   serviceSlug: string;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
-const InquiryPopup: React.FC<InquiryPopupProps> = ({ serviceName, serviceSlug }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const InquiryPopup: React.FC<InquiryPopupProps> = ({ serviceName, serviceSlug, isOpen, onClose }) => {
+  // If isOpen/onClose are provided, use them; otherwise, fallback to internal state and auto-open after 2s
+  const [internalOpen, setInternalOpen] = useState(false);
 
   useEffect(() => {
-    // Show popup after 2 seconds
-    const timer = setTimeout(() => {
-      setIsOpen(true);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
+    if (isOpen === undefined) {
+      const timer = setTimeout(() => {
+        setInternalOpen(true);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
 
   const handleClose = () => {
-    setIsOpen(false);
+    if (onClose) {
+      onClose();
+    } else {
+      setInternalOpen(false);
+    }
   };
 
   return (
     <InquiryForm
-      isOpen={isOpen}
+      isOpen={isOpen !== undefined ? isOpen : internalOpen}
       onClose={handleClose}
       serviceName={serviceName}
       serviceSlug={serviceSlug}

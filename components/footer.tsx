@@ -19,24 +19,34 @@ export default function Footer() {
   }
 
   return (
-    <footer className="bg-gradient-to-b from-gray-900 to-gray-800 text-white">
-      <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 py-3 shadow-lg">
-        <div className="container mx-auto px-4 text-center text-sm font-medium text-white">
-          <span className="inline-flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+    <footer
+      className="text-white"
+      style={{
+        backgroundImage:
+          "linear-gradient(135deg, rgba(67,56,202,0.92), rgba(124,58,237,0.88)), url(/images/heroo.jpg)",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 py-2 sm:py-3 shadow-lg">
+        <div className="container mx-auto px-2 sm:px-4 text-center text-xs sm:text-sm font-medium text-white">
+          <span className="inline-flex items-center flex-wrap justify-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
               <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
             </svg>
-            Book your ride now! Call us at <span className="font-bold ml-1">+91 91120 85055</span> <span className="mx-3">or</span> 
+            <span>Book your ride now! Call us at</span>
+            <span className="font-bold">+91 91120 85055</span>
           </span>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+      <div className="container mx-auto px-2 sm:px-4 lg:px-6 py-8 sm:py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12">
           {/* Popular Cities Column */}
           <div className="text-center">
-            <h3 
-              className="flex items-center justify-center text-lg font-semibold mb-6 cursor-pointer hover:text-blue-400 transition-colors"
+            <h3
+              className="flex items-center justify-center text-base sm:text-lg font-semibold mb-4 sm:mb-6 cursor-pointer hover:text-blue-400 transition-colors px-2"
               onClick={() => toggleSection('popularCities')}
             >
               <div className="flex items-center">
@@ -73,7 +83,7 @@ export default function Footer() {
                 <path d="m6 9 6 6 6-6"/>
               </svg>
             </h3>
-            <div className={`grid grid-cols-2 gap-3 transition-all duration-300 ${openSections.popularCities ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
+            <div className={`grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 transition-all duration-300 ${openSections.popularCities ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
               <Link href="/cities/Cab-Service-Pune" className="text-gray-300 hover:text-blue-400 transition-colors">
                 Pune
               </Link>

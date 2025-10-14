@@ -55,6 +55,13 @@ const XIcon = () => (
   </svg>
 );
 
+const MapPinIcon = () => (
+  <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+  </svg>
+);
+
 interface FormData {
   username: string;
   email: string;
@@ -72,6 +79,7 @@ interface ValidationErrors {
   password?: string;
   confirmPassword?: string;
   address?: string;
+  role?: string;
   general?: string;
 }
 
@@ -158,6 +166,11 @@ export default function Register() {
     // Address validation
     if (formData.address.length < 5) {
       newErrors.address = 'Please enter a valid address (at least 5 characters)';
+    }
+
+    // Role validation
+    if (!formData.role || formData.role === '') {
+      newErrors.role = 'Please select a role';
     }
 
     // Password validation
@@ -293,13 +306,17 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 py-12 px-4 sm:px-6 lg:px-8 relative">
-      {/* Animated Background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/30 via-purple-500/30 to-pink-500/30 animate-pulse"></div>
-      </div>
-
+    <div className="min-h-screen relative overflow-hidden">
+      <video
+        className="absolute inset-0 w-full h-full object-cover"
+        src="/images/video%20(1).mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+      />
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/70 via-purple-900/60 to-violet-900/70" />
+      
       {/* Success Message Toast */}
       {showSuccessMessage && (
         <div className="fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg animate-fade-in-down">
@@ -311,327 +328,387 @@ export default function Register() {
           </div>
         </div>
       )}
-
-      <div className="max-w-md mx-auto relative z-10">
-        <div className="text-center mb-8">
-         
-          <h2 className="text-3xl font-bold text-white tracking-tight">
-            Create your account
-          </h2>
-          <p className="mt-2 text-lg text-gray-300">
-            Already have an account?{' '}
-            <Link 
-              href="/login" 
-              className="font-medium text-pink-400 hover:text-pink-300 transition-colors relative group"
-            >
-              Sign in
-              <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-pink-400 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
-            </Link>
-          </p>
-        </div>
-
-        <div className="backdrop-blur-xl bg-white/10 rounded-2xl shadow-2xl border border-white/20 p-8 space-y-8">
-          {errors.general && (
-            <div className="p-4 rounded-lg bg-red-500/20 border border-red-500/50 text-red-200">
-              <p className="flex items-center text-sm">
-                <XIcon />
-                {errors.general}
-              </p>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              {/* Username Field */}
-              <div className="relative group">
-                <label className="block text-sm font-medium text-gray-200 mb-1">
-                  Username
-                </label>
+      
+      <div className="relative z-10 container mx-auto px-4 py-10">
+        <div className="mx-auto max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-0 rounded-2xl overflow-hidden shadow-2xl">
+          {/* Left promo panel */}
+          <div className="relative hidden md:block">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/80 to-indigo-700/80" />
+            <div className="absolute inset-0 bg-gradient-to-b from-indigo-700/80 to-purple-700/80" />
+            <div className="relative h-full p-8 flex flex-col justify-center items-center">
+              {/* User Login Illustration */}
+              <div className="mb-8 flex justify-center">
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <UserIcon />
+                  {/* User Avatar Circle */}
+                  <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center border-2 border-white/30 backdrop-blur-sm">
+                    <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
                   </div>
-                  <input
-                    type="text"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    className={`block w-full pl-10 pr-3 py-2.5 border ${
-                      errors.username ? 'border-red-500' : 'border-gray-600'
-                    } rounded-lg bg-black/20 text-white placeholder-gray-400 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200`}
-                    placeholder="Enter username"
-                  />
-                  {formData.username && (
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                      {errors.username ? (
-                        <XIcon />
-                      ) : (
-                        <CheckIcon />
-                      )}
-                    </div>
-                  )}
+                  {/* Login Arrow */}
+                  <div className="absolute -right-8 top-1/2 transform -translate-y-1/2">
+                    <svg className="w-6 h-6 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                    </svg>
+                  </div>
+                  {/* Success Checkmark */}
+                  <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center border-2 border-white">
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
                 </div>
-                {errors.username && (
-                  <p className="mt-1 text-sm text-red-400">
-                    {errors.username}
-                  </p>
-                )}
               </div>
-
-              {/* Email Field */}
-              <div className="relative group">
-                <label className="block text-sm font-medium text-gray-200 mb-1">
-                  Email
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <MailIcon />
-                  </div>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className={`block w-full pl-10 pr-3 py-2.5 border ${
-                      errors.email ? 'border-red-500' : 'border-gray-600'
-                    } rounded-lg bg-black/20 text-white placeholder-gray-400 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200`}
-                    placeholder="Enter email"
-                  />
-                  {formData.email && (
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                      {errors.email ? (
-                        <XIcon />
-                      ) : (
-                        <CheckIcon />
-                      )}
-                    </div>
-                  )}
-                </div>
-                {errors.email && (
-                  <p className="mt-1 text-sm text-red-400">
-                    {errors.email}
-                  </p>
-                )}
-              </div>
-
-              {/* Phone Field */}
-              <div className="relative group">
-                <label className="block text-sm font-medium text-gray-200 mb-1">
-                  Phone Number
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <PhoneIcon />
-                  </div>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className={`block w-full pl-10 pr-3 py-2.5 border ${
-                      errors.phone ? 'border-red-500' : 'border-gray-600'
-                    } rounded-lg bg-black/20 text-white placeholder-gray-400 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200`}
-                    placeholder="Enter phone number"
-                  />
-                  {formData.phone && (
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                      {errors.phone ? (
-                        <XIcon />
-                      ) : (
-                        <CheckIcon />
-                      )}
-                    </div>
-                  )}
-                </div>
-                {errors.phone && (
-                  <p className="mt-1 text-sm text-red-400">
-                    {errors.phone}
-                  </p>
-                )}
-              </div>
-
-              {/* Password Field */}
-              <div className="relative group">
-                <label className="block text-sm font-medium text-gray-200 mb-1">
-                  Password
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <LockIcon />
-                  </div>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    className={`block w-full pl-10 pr-10 py-2.5 border ${
-                      errors.password ? 'border-red-500' : 'border-gray-600'
-                    } rounded-lg bg-black/20 text-white placeholder-gray-400 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200`}
-                    placeholder="Enter password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-200 transition-colors"
-                  >
-                    {showPassword ? (
-                      <EyeOffIcon />
-                    ) : (
-                      <EyeIcon />
-                    )}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p className="mt-1 text-sm text-red-400">
-                    {errors.password}
-                  </p>
-                )}
-                {formData.password && (
-                  <div className="mt-2">
-                    <div className="flex items-center">
-                      <div className="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full transition-all duration-300 ${
-                            passwordStrength.score <= 1 ? 'bg-red-500' :
-                            passwordStrength.score === 2 ? 'bg-yellow-500' :
-                            passwordStrength.score === 3 ? 'bg-blue-500' :
-                            passwordStrength.score === 4 ? 'bg-green-500' :
-                            'bg-green-400'
-                          }`}
-                          style={{ width: `${(passwordStrength.score / 5) * 100}%` }}
-                        />
-                      </div>
-                      <span className={`ml-2 text-sm ${
-                        passwordStrength.score <= 1 ? 'text-red-400' :
-                        passwordStrength.score === 2 ? 'text-yellow-400' :
-                        passwordStrength.score === 3 ? 'text-blue-400' :
-                        'text-green-400'
-                      }`}>
-                        {passwordStrength.message}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Confirm Password Field */}
-              <div className="relative group">
-                <label className="block text-sm font-medium text-gray-200 mb-1">
-                  Confirm Password
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <LockIcon />
-                  </div>
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    className={`block w-full pl-10 pr-3 py-2.5 border ${
-                      errors.confirmPassword ? 'border-red-500' : 'border-gray-600'
-                    } rounded-lg bg-black/20 text-white placeholder-gray-400 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200`}
-                    placeholder="Confirm password"
-                  />
-                  {formData.confirmPassword && (
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                      {errors.confirmPassword ? (
-                        <XIcon />
-                      ) : (
-                        <CheckIcon />
-                      )}
-                    </div>
-                  )}
-                </div>
-                {errors.confirmPassword && (
-                  <p className="mt-1 text-sm text-red-400">
-                    {errors.confirmPassword}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Role Selection */}
-            <div className="relative">
-              <label className="block text-sm font-medium text-gray-200 mb-1">
-                Role
-              </label>
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className="block w-full py-2.5 px-3 border border-gray-600 rounded-lg bg-black/20 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200"
-              >
-                <option value="USER">User</option>
-                <option value="VENDOR">Vendor</option>
-              </select>
-            </div>
-
-            {/* Address Field */}
-            <div className="relative">
-              <label className="block text-sm font-medium text-gray-200 mb-1">
-                Address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              
+              {/* Welcome Message */}
+              <div className="w-full border border-white/30 rounded-2xl p-6 text-white/90 text-center">
+                <p className="text-sm mb-2">Signup to join the club of</p>
+                <h3 className="text-3xl font-extrabold leading-tight mb-3">1 Lakh+ Happy Customer</h3>
+                <div className="flex items-center justify-center space-x-2 text-sm text-white/70">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                   </svg>
+                  <span>Secure Registration</span>
                 </div>
-                <input
-                  type="text"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  className={`block w-full pl-10 pr-3 py-2.5 border ${
-                    errors.address ? 'border-red-500' : 'border-gray-600'
-                  } rounded-lg bg-black/20 text-white placeholder-gray-400 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200`}
-                  placeholder="Enter your address"
-                />
-                {formData.address && (
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                    {errors.address ? (
-                      <XIcon />
-                    ) : (
-                      <CheckIcon />
-                    )}
-                  </div>
-                )}
               </div>
-              {errors.address && (
-                <p className="mt-1 text-sm text-red-400">
-                  {errors.address}
+            </div>
+          </div>
+          
+          {/* Right form panel */}
+          <div className="bg-white p-6 sm:p-8">
+            {/* Tabs */}
+            <div className="flex items-center justify-start gap-8 mb-6">
+              <Link href="/login" className="text-gray-500 hover:text-indigo-600 hover:border-indigo-600 pb-1 border-b-2 border-transparent">Login</Link>
+              <span className="text-indigo-600 font-semibold border-b-2 border-indigo-600 pb-1">Register</span>
+              <button onClick={() => router.push('/')} className="ml-auto text-gray-400 hover:text-gray-600" aria-label="Close">✕</button>
+            </div>
+            
+            {/* Role toggle (UI only) */}
+            <div className="flex items-center gap-3 mb-6">
+              <button type="button" className="flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-100 text-indigo-700 text-sm font-medium">
+                <span className="inline-block w-2 h-2 rounded-full bg-indigo-600" /> As User
+              </button>
+              {/* <button type="button" className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 text-gray-600 text-sm font-medium">
+                <span className="inline-block w-2 h-2 rounded-full bg-gray-400" /> As Travel Agent
+              </button> */}
+            </div>
+            
+            {errors.general && (
+              <div className="mb-4 rounded-md bg-red-50 border border-red-200 text-red-700 px-4 py-2">
+                <p className="flex items-center text-sm">
+                  <XIcon />
+                  {errors.general}
                 </p>
-              )}
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className={`w-full py-3 px-4 flex justify-center items-center rounded-lg text-white font-medium ${
-                isLoading
-                  ? 'bg-gray-600 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700'
-              } transition-all duration-200 shadow-lg hover:shadow-pink-500/25`}
-            >
-              {isLoading ? (
-                <div className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Creating account...
+              </div>
+            )}
+            
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                {/* Username Field */}
+                <div className="relative group">
+                  <label className="block text-sm font-medium text-gray-200 mb-1">
+                    Username
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <UserIcon />
+                    </div>
+                    <input
+                      type="text"
+                      name="username"
+                      value={formData.username}
+                      onChange={handleChange}
+                      className={`block w-full pl-10 pr-3 py-2.5 border ${
+                        errors.username ? 'border-red-500' : 'border-gray-600'
+                      } rounded-lg bg-black/20 text-white placeholder-gray-400 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200`}
+                      placeholder="Enter username"
+                    />
+                    {formData.username && (
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        {errors.username ? (
+                          <XIcon />
+                        ) : (
+                          <CheckIcon />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {errors.username && (
+                    <p className="mt-1 text-sm text-red-400">
+                      {errors.username}
+                    </p>
+                  )}
                 </div>
-              ) : (
-                'Create Account'
-              )}
-            </button>
-          </form>
+                
+                {/* Email Field */}
+                <div className="relative group">
+                  <label className="block text-sm font-medium text-gray-200 mb-1">
+                    Email
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <MailIcon />
+                    </div>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className={`block w-full pl-10 pr-3 py-2.5 border ${
+                        errors.email ? 'border-red-500' : 'border-gray-600'
+                      } rounded-lg bg-black/20 text-white placeholder-gray-400 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200`}
+                      placeholder="Enter email"
+                    />
+                    {formData.email && (
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        {errors.email ? (
+                          <XIcon />
+                        ) : (
+                          <CheckIcon />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-red-400">
+                      {errors.email}
+                    </p>
+                  )}
+                </div>
+                
+                {/* Phone Field */}
+                <div className="relative group">
+                  <label className="block text-sm font-medium text-gray-200 mb-1">
+                    Phone Number
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <PhoneIcon />
+                    </div>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      className={`block w-full pl-10 pr-3 py-2.5 border ${
+                        errors.phone ? 'border-red-500' : 'border-gray-600'
+                      } rounded-lg bg-black/20 text-white placeholder-gray-400 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200`}
+                      placeholder="Enter phone number"
+                    />
+                    {formData.phone && (
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        {errors.phone ? (
+                          <XIcon />
+                        ) : (
+                          <CheckIcon />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {errors.phone && (
+                    <p className="mt-1 text-sm text-red-400">
+                      {errors.phone}
+                    </p>
+                  )}
+                </div>
+                
+                {/* Password Field */}
+                <div className="relative group">
+                  <label className="block text-sm font-medium text-gray-200 mb-1">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <LockIcon />
+                    </div>
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      className={`block w-full pl-10 pr-10 py-2.5 border ${
+                        errors.password ? 'border-red-500' : 'border-gray-600'
+                      } rounded-lg bg-black/20 text-white placeholder-gray-400 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200`}
+                      placeholder="Enter password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-200 transition-colors"
+                    >
+                      {showPassword ? (
+                        <EyeOffIcon />
+                      ) : (
+                        <EyeIcon />
+                      )}
+                    </button>
+                  </div>
+                  {errors.password && (
+                    <p className="mt-1 text-sm text-red-400">
+                      {errors.password}
+                    </p>
+                  )}
+                  {formData.password && (
+                    <div className="mt-2">
+                      <div className="flex items-center">
+                        <div className="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full transition-all duration-300 ${
+                              passwordStrength.score <= 1 ? 'bg-red-500' :
+                              passwordStrength.score === 2 ? 'bg-yellow-500' :
+                              passwordStrength.score === 3 ? 'bg-blue-500' :
+                              passwordStrength.score === 4 ? 'bg-green-500' :
+                              'bg-green-400'
+                            }`}
+                            style={{ width: `${(passwordStrength.score / 5) * 100}%` }}
+                          />
+                        </div>
+                        <span className={`ml-2 text-sm ${
+                          passwordStrength.score <= 1 ? 'text-red-400' :
+                          passwordStrength.score === 2 ? 'text-yellow-400' :
+                          passwordStrength.score === 3 ? 'text-blue-400' :
+                          'text-green-400'
+                        }`}>
+                          {passwordStrength.message}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Confirm Password Field */}
+                <div className="relative group">
+                  <label className="block text-sm font-medium text-gray-200 mb-1">
+                    Confirm Password
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <LockIcon />
+                    </div>
+                    <input
+                      type="password"
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      className={`block w-full pl-10 pr-3 py-2.5 border ${
+                        errors.confirmPassword ? 'border-red-500' : 'border-gray-600'
+                      } rounded-lg bg-black/20 text-white placeholder-gray-400 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200`}
+                      placeholder="Confirm password"
+                    />
+                    {formData.confirmPassword && (
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        {errors.confirmPassword ? (
+                          <XIcon />
+                        ) : (
+                          <CheckIcon />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {errors.confirmPassword && (
+                    <p className="mt-1 text-sm text-red-400">
+                      {errors.confirmPassword}
+                    </p>
+                  )}
+                </div>
+                
+                {/* Address Field */}
+                <div className="relative group">
+                  <label className="block text-sm font-medium text-gray-200 mb-1">
+                    Address
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <MapPinIcon />
+                    </div>
+                    <input
+                      type="text"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      className={`block w-full pl-10 pr-3 py-2.5 border ${
+                        errors.address ? 'border-red-500' : 'border-gray-600'
+                      } rounded-lg bg-black/20 text-white placeholder-gray-400 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200`}
+                      placeholder="Enter address"
+                    />
+                    {formData.address && (
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        {errors.address ? (
+                          <XIcon />
+                        ) : (
+                          <CheckIcon />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {errors.address && (
+                    <p className="mt-1 text-sm text-red-400">
+                      {errors.address}
+                    </p>
+                  )}
+                </div>
+                
+                {/* Role Field */}
+                <div className="relative group">
+                  <label className="block text-sm font-medium text-gray-200 mb-1">
+                    Role
+                  </label>
+                  <div className="relative">
+                    <select
+                      name="role"
+                      value={formData.role}
+                      onChange={handleChange}
+                      className={`block w-full pl-10 pr-3 py-2.5 border ${
+                        errors.role ? 'border-red-500' : 'border-gray-600'
+                      } rounded-lg bg-black/20 text-white placeholder-gray-400 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200`}
+                    >
+                      <option value="">Select Role</option>
+                      <option value="user">User</option>
+                      <option value="travel_agent">Travel Agent</option>
+                    </select>
+                    {formData.role && (
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        {errors.role ? (
+                          <XIcon />
+                        ) : (
+                          <CheckIcon />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {errors.role && (
+                    <p className="mt-1 text-sm text-red-400">
+                      {errors.role}
+                    </p>
+                  )}
+                </div>
+                
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className={`w-full py-3 px-4 flex justify-center items-center rounded-lg text-white font-medium ${
+                    isLoading
+                      ? 'bg-gray-600 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700'
+                  } transition-all duration-200 shadow-lg hover:shadow-pink-500/25`}
+                >
+                  {isLoading ? (
+                    <div className="flex items-center">
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Creating account...
+                    </div>
+                  ) : (
+                    'Create Account'
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
-      <FloatingIcons /> 
     </div>
   );
-} 
+}

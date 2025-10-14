@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     "bus tickets",
     "flights",
     "hotels",
-    "holiday packages",
+    "hol  iday packages",
     "World Trip Link"
   ],
   metadataBase: new URL("https://api.worldtriplink.com"),

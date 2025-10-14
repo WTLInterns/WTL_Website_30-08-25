@@ -109,6 +109,7 @@ useEffect(() => {
   const [locationError, setLocationError] = useState("")
   const [calculatedDistance, setCalculatedDistance] = useState<number | null>(null)
   const [scriptLoaded, setScriptLoaded] = useState(false)
+  const [mapsError, setMapsError] = useState<string | null>(null)
 
   const [availableTimeSlots, setAvailableTimeSlots] = useState<TimeSlot[]>([])
   const [isLoadingTimeSlots, setIsLoadingTimeSlots] = useState(false)
@@ -124,7 +125,10 @@ useEffect(() => {
   const dropAutocompleteRef = useRef<any>(null)
   const isInitializedRef = useRef(false)
 
-  const apiKey = "AIzaSyAKjmBSUJ3XR8uD10vG2ptzqLJAZnOlzqI"
+  // Prefer env var, but also allow runtime overrides via cookie/localStorage for quick testing
+  const cookieKey = Cookies.get('GMAPS_KEY') || ""
+  const runtimeKey = typeof window !== 'undefined' ? (localStorage.getItem('GMAPS_KEY') || "") : ""
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || cookieKey || runtimeKey || "AIzaSyAKjmBSUJ3XR8uD10vG2ptzqLJAZnOlzqI"
   const today = new Date().toISOString().split("T")[0]
 
   // Reset form to initial state
@@ -276,12 +280,23 @@ useEffect(() => {
     if (scriptLoaded) {
       // Add a small delay to ensure DOM elements are ready
       const timeoutId = setTimeout(() => {
-        initializeAutocomplete()
+        if (window.google?.maps?.places) {
+          initializeAutocomplete()
+        } else {
+          setMapsError("Google Maps Places library not available after script load.")
+        }
       }, 100)
 
       return () => clearTimeout(timeoutId)
     }
   }, [scriptLoaded])
+
+  // Warn if API key is missing
+  useEffect(() => {
+    if (!apiKey) {
+      setMapsError((prev) => prev ?? "Google Maps API key is missing")
+    } 
+  }, [apiKey])
 
   // Re-initialize autocomplete when refs change (component re-mount)
   useEffect(() => {
@@ -308,7 +323,9 @@ useEffect(() => {
             const needsReinit = !pickupAutocompleteRef.current || !dropAutocompleteRef.current
             if (needsReinit) {
               console.log("Re-initializing autocomplete after page visibility change")
-              initializeAutocomplete()
+              if (window.google?.maps?.places) {
+                initializeAutocomplete()
+              }
             }
           }
         }, 200)
@@ -367,7 +384,7 @@ useEffect(() => {
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.1);
         padding: 8px;
-        z-index: 10000;
+        z-index: 9995;
       }
       
       .pac-item {
@@ -623,16 +640,21 @@ useEffect(() => {
 
   return (
     <>
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initGoogleAutocomplete`}
-        strategy="afterInteractive"
-        onLoad={() => setScriptLoaded(true)}
-        onError={() => console.error("Failed to load Google Maps script")}
-      />
+      {apiKey && (
+        <Script
+          src={`https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`}
+          strategy="afterInteractive"
+          onLoad={() => setScriptLoaded(true)}
+          onError={() => {
+            console.error("Failed to load Google Maps script")
+            setMapsError("Failed to load Google Maps script. Please try again later.")
+          }}
+        />
+      )}
 
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-6xl mx-auto bg-black/30 backdrop-blur-sm rounded-lg shadow-lg p-6"
+        className="w-full max-w-6xl mx-auto bg-white/20 backdrop-blur-sm rounded-lg shadow-lg p-6"
       >
         <div className="space-y-6">
           {/* Trip Type Selection */}
@@ -677,7 +699,7 @@ useEffect(() => {
 
           {/* Package Selection for Rental Trip */}
           {tripType === "rental" && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+            <div className="bg-white/30 backdrop-blur-sm rounded-lg p-4 border border-white/20">
               <label className="block text-sm font-medium text-white mb-3">
                 Select Package
               </label>
@@ -686,7 +708,7 @@ useEffect(() => {
                   name="packageName"
                   value={packageName}
                   onChange={(e) => setPackageName(e.target.value)}
-                  className="w-full p-3 pr-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/20 text-white appearance-none cursor-pointer"
+                  className="w-full p-3 pr-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/30 text-white appearance-none cursor-pointer"
                   required
                 >
                   <option value="" disabled className="bg-gray-800 text-white">
@@ -750,6 +772,9 @@ useEffect(() => {
                     />
                   </svg>
                 </div>
+                {mapsError && (
+                  <p className="mt-1 text-xs text-red-300">{mapsError}. Address suggestions may not work.</p>
+                )}
               </div>
             </div>
 
@@ -815,7 +840,7 @@ useEffect(() => {
                     value={pickupDate}
                     onChange={(e) => handleDateSelection(e.target.value, "pickup")}
                     min={today}
-                    className="w-full p-3 pl-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/20 text-white hide-native-picker"
+                    className="w-full p-3 pl-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/30 text-white hide-native-picker"
                     required
                     ref={pickupDateRef}
                     onClick={() => {
@@ -845,7 +870,7 @@ useEffect(() => {
                       value={Returndate}
                       onChange={(e) => handleDateSelection(e.target.value, "return")}
                       min={pickupDate || today}
-                      className="w-full p-3 pl-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/20 text-white hide-native-picker"
+                      className="w-full p-3 pl-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/30 text-white hide-native-picker"
                       required
                       ref={returnDateRef}
                       onClick={() => {
@@ -874,7 +899,7 @@ useEffect(() => {
                     type="time"
                     value={pickupTime}
                     onChange={(e) => setPickupTime(e.target.value)}
-                    className="w-full p-3 pl-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/20 text-white hide-native-picker"
+                    className="w-full p-3 pl-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/30 text-white hide-native-picker"
                     required
                     ref={pickupTimeRef}
                     onClick={() => {
@@ -926,11 +951,11 @@ useEffect(() => {
         </div>
       </form>
       {!loading && (showPopup && !isLoggedIn) && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-slate-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
-            <h3 className="text-xl font-bold text-white mb-4">Enter Your Details</h3>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[9996] p-2 sm:p-4">
+          <div className="bg-slate-800 rounded-lg shadow-xl p-4 sm:p-6 w-full max-w-md mx-2 sm:mx-4">
+            <h3 className="text-lg sm:text-xl font-bold text-white mb-3 sm:mb-4">Enter Your Details</h3>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <div>
                 <label className="block text-sm font-medium text-white mb-1">Your Name</label>
                 <input
@@ -938,7 +963,7 @@ useEffect(() => {
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
                   placeholder="Enter your full name"
-                  className="w-full p-3 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/20 text-white placeholder-white/70"
+                  className="w-full p-3 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/30 text-white placeholder-white/70"
                   required
                 />
               </div>
@@ -950,7 +975,7 @@ useEffect(() => {
                   value={mobileNumber}
                   onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, "").slice(0, 10))}
                   placeholder="Enter 10-digit mobile number"
-                  className="w-full p-3 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/20 text-white placeholder-white/70"
+                  className="w-full p-3 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/30 text-white placeholder-white/70"
                   required
                   maxLength={10}
                   pattern="[0-9]{10}"
@@ -959,18 +984,18 @@ useEffect(() => {
 
               {error && <div className="text-red-500 text-sm">{error}</div>}
 
-              <div className="flex space-x-3 pt-2">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setShowPopup(false)}
-                  className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                  className="flex-1 bg-gray-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm sm:text-base"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
                   onClick={handleFinalSubmit}
-                  className="flex-1 bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition-colors"
+                  className="flex-1 bg-emerald-500 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-emerald-600 transition-colors text-sm sm:text-base"
                 >
                   Continue
                 </button>

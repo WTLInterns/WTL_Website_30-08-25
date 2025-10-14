@@ -9,7 +9,7 @@ import Navbar from "@/components/Navbar"
 import CabBookingForm from "@/components/CabBookingForm"
 import BusBookingForm from "@/components/BusBookingForm"
 import HotelBookingForm from "@/components/HotelBookingForm"
-import { useIntersectionCounter } from '@/app/hooks/useIntersectionCounter'
+import { useIntersectionCounter } from '@/hooks/useIntersectionCounter'
 import FlightBookingForm from "@/components/FlightBookingForm"
 import HomestaysBookingForm from "@/components/HomestaysBookingForm"
 import HolidayBookingForm from "@/components/HolidayBookingForm"

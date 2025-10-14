@@ -15,6 +15,7 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ isOpen, onClose, serviceName,
     name: "",
     email: "",
     contact: "",
+    companyName: "",
     service: serviceSlug || "",
     serviceName: serviceName || "",
   });
@@ -44,6 +45,7 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ isOpen, onClose, serviceName,
       name: formData.name,
       email: formData.email,
       contact: formData.contact,
+      companyName: formData.companyName,
       serviceName: formData.serviceName,
       timeStamp: new Date().toISOString()
     };
@@ -53,17 +55,18 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ isOpen, onClose, serviceName,
     console.log("📋 INQUIRY FORM SUBMISSION");
     console.log("=".repeat(50));
     console.log("👤 USER INFORMATION:");
-    console.log(`   Name: ${enquiryData.name}`);
-    console.log(`   Email: ${enquiryData.email}`);
-    console.log(`   Contact: ${enquiryData.contact}`);
-    console.log(`   Service Name: ${enquiryData.serviceName}`);
-    console.log(`   Timestamp: ${enquiryData.timeStamp}`);
+  console.log(`   Name: ${enquiryData.name}`);
+  console.log(`   Email: ${enquiryData.email}`);
+  console.log(`   Contact: ${enquiryData.contact}`);
+  console.log(`   Company Name: ${enquiryData.companyName}`);
+  console.log(`   Service Name: ${enquiryData.serviceName}`);
+  console.log(`   Timestamp: ${enquiryData.timeStamp}`);
     console.log("=".repeat(50));
 
     try {
       // Call your backend API
       // You can configure the base URL here or use environment variables
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.worldtriplink.com';
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8085';
       const response = await fetch(`${API_BASE_URL}/create-enquiry`, {
         method: 'POST',
         headers: {
@@ -92,6 +95,7 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ isOpen, onClose, serviceName,
           name: "",
           email: "",
           contact: "",
+          companyName: "",
           service: serviceSlug || "",
           serviceName: serviceName || ""
         });
@@ -154,7 +158,7 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ isOpen, onClose, serviceName,
             >
               <X size={20} />
             </button>
-            <h2 className="text-xl font-bold mb-2">Get Quick Quote</h2>
+            <h2 className="text-xl font-bold mb-2">Inquiry Form</h2>
             <p className="text-blue-100 text-sm">{serviceName}</p>
           </div>
 
@@ -206,6 +210,24 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ isOpen, onClose, serviceName,
                     onChange={handleInputChange}
                     placeholder="Your Contact Number"
                     required
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                  />
+                </div>
+
+                {/* Company Name Field */}
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <rect x="3" y="7" width="18" height="13" rx="2" strokeWidth="2" />
+                      <path d="M16 3v4M8 3v4" strokeWidth="2" />
+                    </svg>
+                  </div>
+                  <input
+                    type="text"
+                    name="companyName"
+                    value={formData.companyName}
+                    onChange={handleInputChange}
+                    placeholder="Company Name (optional)"
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
                   />
                 </div>
@@ -311,6 +333,12 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ isOpen, onClose, serviceName,
                             <span className="text-gray-600">Contact:</span>
                             <span className="font-medium text-gray-800">{submittedData.contact}</span>
                           </div>
+                          {submittedData.companyName && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Company Name:</span>
+                              <span className="font-medium text-gray-800">{submittedData.companyName}</span>
+                            </div>
+                          )}
                         </div>
                       </div>
 
