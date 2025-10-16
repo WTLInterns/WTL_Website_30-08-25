@@ -500,10 +500,10 @@ export default function Footer() {
             <Link href="/privacy-policy" className="hover:text-blue-400 transition-colors mr-4">
               Privacy Policy
             </Link>
-            {" "}•{" "}
-            <Link href="/career" className="hover:text-blue-400 transition-colors">
+            {" "}{" "}
+            {/* <Link href="/career" className="hover:text-blue-400 transition-colors">
               Careers
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>

@@ -36,7 +36,7 @@ export default function AppPromotion() {
             {/* Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start mt-4 sm:mt-6">
               <Link
-                href="#"
+                href="https://apps.apple.com/in/app/wtl-tourism/id6747573221"
                 className="bg-white/80 backdrop-blur-sm rounded-lg px-4 sm:px-6 py-2 sm:py-3 flex items-center justify-center gap-2 text-gray-900 shadow-sm hover:bg-indigo-50 transition-colors text-sm sm:text-base"
               >
                 <Image
