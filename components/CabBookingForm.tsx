@@ -597,8 +597,17 @@ useEffect(() => {
         });
         router.push(`/search?${searchParams.toString()}`);
       } else {
-        // Only show popup if not logged in (double check state)
-        if (!isLoggedIn) setShowPopup(true);
+        // Navigate directly to search page even if not logged in
+        const searchParams = new URLSearchParams({
+          pickup: pickupLocation,
+          drop: dropLocation,
+          date: pickupDate,
+          time: pickupTime,
+          tripType: tripType,
+          Returndate: Returndate || "",
+          distance: distance ? distance.toString() : "0",
+        });
+        router.push(`/search?${searchParams.toString()}`);
       }
     } catch (error) {
       console.error("Error submitting booking:", error);
@@ -654,7 +663,7 @@ useEffect(() => {
 
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-6xl mx-auto bg-white/20 backdrop-blur-sm rounded-lg shadow-lg p-6"
+        className="w-full max-w-6xl mx-auto bg-black/30 backdrop-blur-sm rounded-lg shadow-lg p-6"
       >
         <div className="space-y-6">
           {/* Trip Type Selection */}
@@ -699,7 +708,7 @@ useEffect(() => {
 
           {/* Package Selection for Rental Trip */}
           {tripType === "rental" && (
-            <div className="bg-white/30 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
               <label className="block text-sm font-medium text-white mb-3">
                 Select Package
               </label>
@@ -708,7 +717,7 @@ useEffect(() => {
                   name="packageName"
                   value={packageName}
                   onChange={(e) => setPackageName(e.target.value)}
-                  className="w-full p-3 pr-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/30 text-white appearance-none cursor-pointer"
+                  className="w-full p-3 pr-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/20 text-white appearance-none cursor-pointer"
                   required
                 >
                   <option value="" disabled className="bg-gray-800 text-white">
@@ -840,7 +849,7 @@ useEffect(() => {
                     value={pickupDate}
                     onChange={(e) => handleDateSelection(e.target.value, "pickup")}
                     min={today}
-                    className="w-full p-3 pl-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/30 text-white hide-native-picker"
+                    className="w-full p-3 pl-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/20 text-white hide-native-picker"
                     required
                     ref={pickupDateRef}
                     onClick={() => {
@@ -870,7 +879,7 @@ useEffect(() => {
                       value={Returndate}
                       onChange={(e) => handleDateSelection(e.target.value, "return")}
                       min={pickupDate || today}
-                      className="w-full p-3 pl-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/30 text-white hide-native-picker"
+                      className="w-full p-3 pl-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/20 text-white hide-native-picker"
                       required
                       ref={returnDateRef}
                       onClick={() => {
@@ -899,7 +908,7 @@ useEffect(() => {
                     type="time"
                     value={pickupTime}
                     onChange={(e) => setPickupTime(e.target.value)}
-                    className="w-full p-3 pl-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/30 text-white hide-native-picker"
+                    className="w-full p-3 pl-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/20 text-white hide-native-picker"
                     required
                     ref={pickupTimeRef}
                     onClick={() => {
@@ -950,6 +959,7 @@ useEffect(() => {
           </div>
         </div>
       </form>
+      {/*
       {!loading && (showPopup && !isLoggedIn) && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[9996] p-2 sm:p-4">
           <div className="bg-slate-800 rounded-lg shadow-xl p-4 sm:p-6 w-full max-w-md mx-2 sm:mx-4">
@@ -963,7 +973,7 @@ useEffect(() => {
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
                   placeholder="Enter your full name"
-                  className="w-full p-3 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/30 text-white placeholder-white/70"
+                  className="w-full p-3 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/20 text-white placeholder-white/70"
                   required
                 />
               </div>
@@ -975,7 +985,7 @@ useEffect(() => {
                   value={mobileNumber}
                   onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, "").slice(0, 10))}
                   placeholder="Enter 10-digit mobile number"
-                  className="w-full p-3 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/30 text-white placeholder-white/70"
+                  className="w-full p-3 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/20 text-white placeholder-white/70"
                   required
                   maxLength={10}
                   pattern="[0-9]{10}"
@@ -1004,6 +1014,7 @@ useEffect(() => {
           </div>
         </div>
       )}
+      */}
     </>
   )
 }

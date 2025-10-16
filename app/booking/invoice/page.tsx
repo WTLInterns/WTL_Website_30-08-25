@@ -115,6 +115,16 @@ function InvoiceContent() {
   // Razorpay public key from environment variables
   const razorpayKeyId = "rzp_test_ZzKJz2egIV36gC";
 
+  // Coupon state
+  const [couponCode, setCouponCode] = useState("");
+  const [couponError, setCouponError] = useState("");
+  const [discountPercent, setDiscountPercent] = useState<number>(0);
+  const [discountApplied, setDiscountApplied] = useState(false);
+  const [discountAmount, setDiscountAmount] = useState<number>(0);
+  const [couponMaxDiscount, setCouponMaxDiscount] = useState<number>(Number.POSITIVE_INFINITY);
+  const [couponMinOrder, setCouponMinOrder] = useState<number>(0);
+  const [availableCoupons, setAvailableCoupons] = useState<Array<{ couponCode: string; isEnabled?: boolean }>>([]);
+
   // Helper function to show payment error
   const showPaymentErrorMessage = (message: string) => {
     setPaymentError(message);
@@ -175,8 +185,10 @@ function InvoiceContent() {
   // Parse URL parameters on component mount
   useEffect(() => {
     const price = Number(searchParams.get("price")) || 0;
+    // Apply discount to base price if already applied via URL
+    const baseAfterDiscount = Math.max(0, price - Math.round(price * (discountPercent / 100)));
     const calculatedTotal =
-      price + Math.round(price * 0.1) + Math.round(price * 0.05);
+      baseAfterDiscount + Math.round(baseAfterDiscount * 0.1) + Math.round(baseAfterDiscount * 0.05);
 
     setPricing((prev) => ({
       ...prev,
@@ -201,7 +213,123 @@ function InvoiceContent() {
         }
       }
     }
+    // Prefetch available coupons (enabled only)
+    (async () => {
+      try {
+        const res = await fetch("https://api.worldtriplink.com/discount/getAll");
+        if (res.ok) {
+          const all = await res.json();
+          const today = new Date(); today.setHours(0,0,0,0);
+          const enabled = Array.isArray(all) ? all.filter((c: any) => {
+            const isEnabled = c?.isEnabled === true || c?.isEnabled === "true";
+            if (!isEnabled) return false;
+            if (!c?.expiryDate) return true;
+            // expiryDate is inclusive; treat expired if expiryDate < today
+            const d = new Date(String(c.expiryDate)); d.setHours(0,0,0,0);
+            return d.getTime() >= today.getTime();
+          }) : [];
+          setAvailableCoupons(enabled.map((c: any) => ({ couponCode: String(c.couponCode || "") || "" })));
+        }
+      } catch (e) {
+        // ignore listing errors; coupon apply will still work
+      }
+    })();
   }, [searchParams]);
+
+  // Apply coupon handler
+  const handleApplyCoupon = async () => {
+    setCouponError("");
+    setDiscountApplied(false);
+    if (!couponCode.trim()) {
+      setCouponError("Enter a coupon code");
+      return;
+    }
+    try {
+      const res = await fetch(`https://api.worldtriplink.com/discount/validate?code=${encodeURIComponent(couponCode.trim())}`);
+      let data: any | null = null;
+      if (!res.ok) {
+        if (res.status === 410) {
+          setCouponError("Coupon expired");
+          return;
+        }
+        // Fallback: fetch all coupons and match locally (handles case/whitespace mismatches)
+        try {
+          const la = await fetch("https://api.worldtriplink.com/discount/getAll");
+          if (la.ok) {
+            const all = await la.json();
+            const input = couponCode.trim().toUpperCase();
+            const today = new Date(); today.setHours(0,0,0,0);
+            data = (all || []).find((c: any) => {
+              const codeMatch = String(c?.couponCode || "").trim().toUpperCase() === input;
+              const enabled = c?.isEnabled === true || c?.isEnabled === "true";
+              if (!codeMatch || !enabled) return false;
+              if (!c?.expiryDate) return true;
+              const d = new Date(String(c.expiryDate)); d.setHours(0,0,0,0);
+              return d.getTime() >= today.getTime();
+            });
+            if (!data) {
+              setCouponError("Invalid or disabled coupon");
+              return;
+            }
+          } else {
+            setCouponError("Invalid or disabled coupon");
+            return;
+          }
+        } catch {
+          setCouponError("Invalid or disabled coupon");
+          return;
+        }
+      } else {
+        data = await res.json();
+      }
+      const percent = data?.discountPercentage != null ? Number(data.discountPercentage) : 0; // backend may not send
+      const flatAmount = data?.priceDiscount != null ? Number(data.priceDiscount) : 0; // fallback to flat discount
+      const maxDiscountAmount = Number(data?.maxDiscountAmount ?? Number.POSITIVE_INFINITY);
+      const minOrderAmount = Number(data?.minOrderAmount ?? 0);
+
+      const base = Number(searchParams.get("price")) || Number(carData.price) || 0;
+
+      if (base < minOrderAmount) {
+        setCouponError(`Minimum order amount for this coupon is ₹${minOrderAmount}`);
+        setDiscountPercent(0);
+        setDiscountAmount(0);
+        setDiscountApplied(false);
+        return;
+      }
+
+      let appliedDiscount = 0;
+      if (percent > 0) {
+        const rawDiscount = Math.round((base * percent) / 100);
+        appliedDiscount = Math.min(rawDiscount, isFinite(maxDiscountAmount) ? maxDiscountAmount : rawDiscount);
+      } else if (flatAmount > 0) {
+        appliedDiscount = Math.round(flatAmount);
+      } else {
+        setCouponError("This coupon has no discount configured");
+        return;
+      }
+
+      const discountedBase = Math.max(0, base - appliedDiscount);
+
+      setDiscountPercent(percent);
+      setDiscountAmount(appliedDiscount);
+      setDiscountApplied(true);
+      setCouponMaxDiscount(maxDiscountAmount);
+      setCouponMinOrder(minOrderAmount);
+
+      // Recompute totals with discounted base for one-way/rental immediately
+      setPricing((prev) => ({
+        ...prev,
+        total: discountedBase + Math.round(discountedBase * 0.1) + Math.round(discountedBase * 0.05),
+        isCalculated: true,
+        service: Math.round(discountedBase * 0.1),
+        gst: Math.round(discountedBase * 0.05),
+      }));
+      setPartialAmount(Math.round((discountedBase + Math.round(discountedBase * 0.1) + Math.round(discountedBase * 0.05)) * 0.2));
+    } catch (e) {
+      console.error("Coupon validate failed", e);
+      setCouponError("Could not validate coupon. Try again");
+    }
+  };
 
   const userId = Cookies.get("userId");
 
@@ -624,7 +752,6 @@ function InvoiceContent() {
         )}
 
 
-
         {/* Header */}
         <div className="text-center mb-6">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
@@ -697,7 +824,9 @@ function InvoiceContent() {
                           const baseFare = Number(carData.price);
                           const numberOfDays = Number(carData.days);
                           const driverCost = driverrate * numberOfDays;
-                          const subTotal = driverCost + baseFare;
+                          const appliedDisc = discountApplied ? Number(discountAmount || 0) : 0;
+                          const discountedBaseFare = Math.max(0, baseFare - appliedDisc);
+                          const subTotal = driverCost + discountedBaseFare;
                           const gstAmount = subTotal * 0.05;
                           const serviceCharge = subTotal * 0.1;
                           const totalAmount = subTotal + gstAmount + serviceCharge;
@@ -736,27 +865,17 @@ function InvoiceContent() {
                                 <span className="text-blue-200">
                                   Base Fare
                                 </span>
-                                <span className="font-semibold">
-                                  ₹{baseFare}
-                                </span>
+                                <span className="font-semibold">₹{baseFare}</span>
                               </div>
-
+                              {discountApplied && discountAmount > 0 && (
+                                <div className="flex justify-between items-center">
+                                  <span className="text-blue-200">Discount ({discountPercent}%{Number.isFinite(couponMaxDiscount) ? `, max ₹${couponMaxDiscount}` : ""})</span>
+                                  <span className="font-semibold">-₹{discountAmount}</span>
+                                </div>
+                              )}
                               <div className="flex justify-between items-center">
-                                <span className="text-blue-200">
-                                  Driver Rate (DriverRate * days)
-                                </span>
-                                <span className="font-semibold">
-                                  ₹{driverCost}
-                                </span>
-                              </div>
-
-                              <div className="flex justify-between items-center">
-                                <span className="text-blue-200">
-                                  Amount(DriverRate+BaseFare)
-                                </span>
-                                <span className="font-semibold">
-                                  ₹{subTotal}
-                                </span>
+                                <span className="text-blue-200">Amount(DriverRate+BaseFare)</span>
+                                <span className="font-semibold">₹{subTotal}</span>
                               </div>
 
                               <div className="flex justify-between items-center">
@@ -796,6 +915,12 @@ function InvoiceContent() {
                               ₹{carData.price}
                             </span>
                           </div>
+                          {discountApplied && discountAmount > 0 && (
+                            <div className="flex justify-between items-center">
+                              <span className="text-blue-200">Discount ({discountPercent}%{Number.isFinite(couponMaxDiscount) ? `, max ₹${couponMaxDiscount}` : ""})</span>
+                              <span className="font-semibold">-₹{discountAmount}</span>
+                            </div>
+                          )}
                           
                           <div className="flex justify-between items-center">
                             <span className="text-blue-200">
@@ -805,7 +930,10 @@ function InvoiceContent() {
                               ₹
                               {pricing.isCalculated
                                 ? pricing.service
-                                : Math.round(carData.price * 0.1)}
+                                : (() => {
+                                    const base = Math.max(0, Number(carData.price) - Number(discountAmount || 0));
+                                    return Math.round(base * 0.1);
+                                  })()}
                             </span>
                           </div>
                           
@@ -815,7 +943,10 @@ function InvoiceContent() {
                               ₹
                               {pricing.isCalculated
                                 ? pricing.gst
-                                : Math.round(carData.price * 0.05)}
+                                : (() => {
+                                    const base = Math.max(0, Number(carData.price) - Number(discountAmount || 0));
+                                    return Math.round(base * 0.05);
+                                  })()}
                             </span>
                           </div>
                           
@@ -825,9 +956,10 @@ function InvoiceContent() {
                               ₹
                               {pricing.isCalculated
                                 ? pricing.total
-                                : carData.price +
-                                  Math.round(carData.price * 0.1) +
-                                  Math.round(carData.price * 0.05)}
+                                : (() => {
+                                    const base = Math.max(0, Number(carData.price) - Number(discountAmount || 0));
+                                    return base + Math.round(base * 0.1) + Math.round(base * 0.05);
+                                  })()}
                             </span>
                           </div>
                         </>
@@ -868,11 +1000,17 @@ function InvoiceContent() {
                               ₹{carData.price}
                             </span>
                           </div>
+                          {discountApplied && discountAmount > 0 && (
+                            <div className="flex justify-between items-center">
+                              <span className="text-blue-200">Discount ({discountPercent}%{Number.isFinite(couponMaxDiscount) ? `, max ₹${couponMaxDiscount}` : ""})</span>
+                              <span className="font-semibold">-₹{discountAmount}</span>
+                            </div>
+                          )}
                           
                           <div className="flex justify-between items-center">
                             <span className="text-blue-200">GST (5%):</span>
                             <span className="font-semibold">
-                              ₹{Math.round(carData.price * 0.05)}
+                              ₹{(() => { const base = Math.max(0, Number(carData.price) - Number(discountAmount || 0)); return Math.round(base * 0.05); })()}
                             </span>
                           </div>
 
@@ -881,7 +1019,7 @@ function InvoiceContent() {
                               Service Charge (10%):
                             </span>
                             <span className="font-semibold">
-                              ₹{Math.round(carData.price * 0.1)}
+                              ₹{(() => { const base = Math.max(0, Number(carData.price) - Number(discountAmount || 0)); return Math.round(base * 0.1); })()}
                             </span>
                           </div>
 
@@ -889,9 +1027,7 @@ function InvoiceContent() {
                             <span className="font-bold">Total Amount:</span>
                             <span className="font-bold text-2xl">
                               ₹
-                              {carData.price +
-                                Math.round(carData.price * 0.05) +
-                                Math.round(carData.price * 0.1)}
+                              {(() => { const base = Math.max(0, Number(carData.price) - Number(discountAmount || 0)); return base + Math.round(base * 0.05) + Math.round(base * 0.1); })()}
                             </span>
                           </div>
                         </>
@@ -902,7 +1038,7 @@ function InvoiceContent() {
               </div>
             </div>
 
-            {/* Right Column – Trip Information & Booking Form */}
+            {/* Right Column – Trip Information, Coupon & Booking Form */}
             <div className="p-6">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">
                 Trip Information
@@ -968,6 +1104,45 @@ function InvoiceContent() {
                     </p>
                   </div>
                 </div>
+              </div>
+
+              {/* Coupon Section */}
+              <div className="bg-blue-50 rounded-lg p-4 mb-6">
+                <label className="block text-sm font-medium text-blue-900 mb-2">Coupon Code</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    placeholder="Enter coupon code"
+                    className="flex-1 border border-blue-200 rounded-md px-3 py-2"
+                  />
+                  <button onClick={handleApplyCoupon} className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                    Apply
+                  </button>
+                </div>
+                {couponError && <p className="text-red-600 text-sm mt-2">{couponError}</p>}
+                {discountApplied && !couponError && (
+                  <p className="text-green-700 text-sm mt-2">Coupon applied{discountPercent > 0 ? `: ${discountPercent}% off` : `: ₹${discountAmount} off`}</p>
+                )}
+                {availableCoupons && availableCoupons.length > 0 && (
+                  <div className="mt-3">
+                    <p className="text-xs text-blue-900 mb-1">Available Coupons:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {availableCoupons.slice(0,6).map((c) => (
+                        <button
+                          key={c.couponCode}
+                          type="button"
+                          onClick={() => setCouponCode(String(c.couponCode || "").toUpperCase())}
+                          className="px-2 py-1 text-xs bg-white border border-blue-200 rounded hover:bg-blue-100"
+                          title="Click to fill coupon"
+                        >
+                          {c.couponCode}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Booking Form */}
