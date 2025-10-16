@@ -83,13 +83,13 @@ export default function HomePage() {
       <div className="fixed inset-0 overflow-hidden">
         {currentTab === "cabs" ? (
           <>
-            <video
-              className="absolute inset-0 w-full h-full object-cover"
-              src="/images/video%20(1).mp4"
-              autoPlay
-              muted
-              loop
-              playsInline
+            <Image
+              src="/images/generated-image (2).png"
+              alt="Background"
+              fill
+              style={{ objectFit: "cover" }}
+              priority
+              quality={75}
             />
             <div className="absolute inset-0 bg-black/40" />
           </>

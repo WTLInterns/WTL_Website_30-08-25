@@ -663,11 +663,11 @@ useEffect(() => {
 
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-6xl mx-auto bg-black/30 backdrop-blur-sm rounded-lg shadow-lg p-6"
+        className="w-full max-w-6xl mx-auto mt-[-70px] bg-gradient-to-b from-white/60 to-white/40 backdrop-blur-md rounded-2xl shadow-2xl p-6 md:p-8 ring-1 ring-white/40"
       >
         <div className="space-y-6">
           {/* Trip Type Selection */}
-          <div className="flex space-x-6">
+          <div className="flex flex-wrap gap-3">
             <label className="flex items-center space-x-2 cursor-pointer">
               <input
                 type="radio"
@@ -678,7 +678,7 @@ useEffect(() => {
                 className="form-radio text-emerald-500 focus:ring-emerald-500"
                 required
               />
-              <span className="text-white">One Way</span>
+              <span className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 shadow-sm ${tripType === 'oneWay' ? 'bg-emerald-500 text-white ring-2 ring-emerald-400' : 'bg-white text-gray-700 hover:bg-emerald-50 ring-1 ring-gray-300'}`}>One Way</span>
             </label>
             <label className="flex items-center space-x-2 cursor-pointer">
               <input
@@ -690,7 +690,7 @@ useEffect(() => {
                 className="form-radio text-emerald-500 focus:ring-emerald-500"
                 required
               />
-              <span className="text-white">Round Trip</span>
+              <span className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 shadow-sm ${tripType === 'roundTrip' ? 'bg-emerald-500 text-white ring-2 ring-emerald-400' : 'bg-white text-gray-700 hover:bg-emerald-50 ring-1 ring-gray-300'}`}>Round Trip</span>
             </label>
             <label className="flex items-center space-x-2 cursor-pointer">
               <input
@@ -702,14 +702,14 @@ useEffect(() => {
                 className="form-radio text-emerald-500 focus:ring-emerald-500"
                 required
               />
-              <span className="text-white">Rental Trip</span>
+              <span className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 shadow-sm ${tripType === 'rental' ? 'bg-emerald-500 text-white ring-2 ring-emerald-400' : 'bg-white text-gray-700 hover:bg-emerald-50 ring-1 ring-gray-300'}`}>Rental Trip</span>
             </label>
           </div>
 
           {/* Package Selection for Rental Trip */}
           {tripType === "rental" && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-              <label className="block text-sm font-medium text-white mb-3">
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-gray-200 shadow">
+              <label className="block text-sm font-semibold text-gray-800 mb-3">
                 Select Package
               </label>
               <div className="relative">
@@ -717,37 +717,37 @@ useEffect(() => {
                   name="packageName"
                   value={packageName}
                   onChange={(e) => setPackageName(e.target.value)}
-                  className="w-full p-3 pr-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/20 text-white appearance-none cursor-pointer"
+                  className="w-full p-3.5 pr-10 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white/95 text-gray-900 appearance-none cursor-pointer shadow-inner"
                   required
                 >
-                  <option value="" disabled className="bg-gray-800 text-white">
+                  <option value="" disabled className="bg-white text-gray-900">
                     Choose a package...
                   </option>
-                  <option value="4hrs/40Km" className="bg-gray-800 text-white">
+                  <option value="4hrs/40Km" className="bg-white text-gray-900">
                     4hrs/40Km - Perfect for city tours
                   </option>
-                  <option value="8hrs/80Km" className="bg-gray-800 text-white">
+                  <option value="8hrs/80Km" className="bg-white text-gray-900">
                     8hrs/80Km - Ideal for outstation trips
                   </option>
                 </select>
                 {/* Custom dropdown arrow */}
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
               </div>
-              <div className="mt-2 text-xs text-white/70">
+              <div className="mt-2 text-xs text-gray-600">
                 Choose your rental package based on duration and distance needs
               </div>
             </div>
           )}
 
           {/* Location and Time Selection */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Pickup Location */}
             <div>
-              <label className="block text-sm font-medium text-white mb-1">Pickup Location</label>
+              <label className="block text-sm font-semibold text-gray-800 mb-1">Pickup Location</label>
               <div className="relative">
                 <input
                   ref={pickupRef}
@@ -762,11 +762,11 @@ useEffect(() => {
                       setTimeout(() => initializeAutocomplete(), 100)
                     }
                   }}
-                  className="w-full p-3 pl-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/20 text-white placeholder-white/70"
+                  className="w-full p-3.5 pl-11 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white/95 text-gray-900 placeholder-gray-500 shadow-inner"
                   required
                 />
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -782,14 +782,14 @@ useEffect(() => {
                   </svg>
                 </div>
                 {mapsError && (
-                  <p className="mt-1 text-xs text-red-300">{mapsError}. Address suggestions may not work.</p>
+                  <p className="mt-1 text-xs text-red-600 font-medium">{mapsError}. Address suggestions may not work.</p>
                 )}
               </div>
             </div>
 
             {/* Drop Location - Modified for Rental Trip */}
             <div>
-              <label className="block text-sm font-medium text-white mb-1">
+              <label className="block text-sm font-semibold text-gray-800 mb-1">
                 {tripType === "rental" ? "Drop Location (Optional)" : "Drop Location"}
               </label>
               <div className="relative">
@@ -806,11 +806,11 @@ useEffect(() => {
                       setTimeout(() => initializeAutocomplete(), 100)
                     }
                   }}
-                  className="w-full p-3 pl-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/20 text-white placeholder-white/70"
+                  className="w-full p-3.5 pl-11 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white/95 text-gray-900 placeholder-gray-500 shadow-inner"
                   required={tripType !== "rental"}
                 />
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -827,7 +827,7 @@ useEffect(() => {
                 </div>
               </div>
               {tripType === "rental" && (
-                <div className="mt-1 text-xs text-white/60">
+                <div className="mt-1 text-xs text-gray-600">
                   For rental trips, drop location is optional
                 </div>
               )}
@@ -835,11 +835,11 @@ useEffect(() => {
 
             {/* Pickup Date */}
             <div>
-              <label className="block text-sm font-medium text-white mb-1">Pickup Date</label>
+              <label className="block text-sm font-semibold text-gray-800 mb-1">Pickup Date</label>
               <div className="relative">
                 <div className="relative">
                   <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                   </span>
@@ -849,7 +849,7 @@ useEffect(() => {
                     value={pickupDate}
                     onChange={(e) => handleDateSelection(e.target.value, "pickup")}
                     min={today}
-                    className="w-full p-3 pl-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/20 text-white hide-native-picker"
+                    className="w-full p-3.5 pl-11 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white/95 text-gray-900 hide-native-picker shadow-inner"
                     required
                     ref={pickupDateRef}
                     onClick={() => {
@@ -865,11 +865,11 @@ useEffect(() => {
             {/* Return Date */}
             {tripType === "roundTrip" && (
               <div>
-                <label className="block text-sm font-medium text-white mb-1">Return Date</label>
+                <label className="block text-sm font-semibold text-gray-800 mb-1">Return Date</label>
                 <div className="relative">
                   <div className="relative">
                     <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                     </span>
@@ -879,7 +879,7 @@ useEffect(() => {
                       value={Returndate}
                       onChange={(e) => handleDateSelection(e.target.value, "return")}
                       min={pickupDate || today}
-                      className="w-full p-3 pl-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/20 text-white hide-native-picker"
+                      className="w-full p-3.5 pl-11 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white/95 text-gray-900 hide-native-picker shadow-inner"
                       required
                       ref={returnDateRef}
                       onClick={() => {
@@ -895,11 +895,11 @@ useEffect(() => {
 
             {/* Pickup Time */}
             <div>
-              <label className="block text-sm font-medium text-white mb-1">Pickup Time</label>
+              <label className="block text-sm font-semibold text-gray-800 mb-1">Pickup Time</label>
               <div className="relative">
                 <div className="relative">
                   <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </span>
@@ -908,7 +908,7 @@ useEffect(() => {
                     type="time"
                     value={pickupTime}
                     onChange={(e) => setPickupTime(e.target.value)}
-                    className="w-full p-3 pl-10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white/20 text-white hide-native-picker"
+                    className="w-full p-3.5 pl-11 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white/95 text-gray-900 hide-native-picker shadow-inner"
                     required
                     ref={pickupTimeRef}
                     onClick={() => {
@@ -920,7 +920,7 @@ useEffect(() => {
                 </div>
                 {isLoadingTimeSlots && (
                   <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-emerald-500"></div>
                   </div>
                 )}
               </div>
@@ -933,7 +933,7 @@ useEffect(() => {
           <div className="flex justify-center mt-6 space-x-4">
             <button
               type="submit"
-              className="bg-emerald-500 text-white px-12 py-3 rounded-lg text-lg font-medium hover:bg-emerald-600 transition-colors"
+              className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-12 py-3.5 rounded-full text-lg font-semibold hover:shadow-xl shadow-lg transition-all ring-1 ring-emerald-400 hover:-translate-y-0.5"
             >
               Search Available Cabs
             </button>

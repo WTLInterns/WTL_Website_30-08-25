@@ -1,6 +1,6 @@
 export default function MarqueeText() {
   return (
-    <div className="text-white py-2 overflow-hidden whitespace-nowrap">
+    <div className="text-black py-2 overflow-hidden whitespace-nowrap">
       <div className="inline-block animate-marquee">
         Book your ride now! Call us at +91 9730545491 
       </div>
