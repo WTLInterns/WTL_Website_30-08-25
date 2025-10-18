@@ -1,12 +1,12 @@
 "use client"
 
-import React, { useEffect, useState, FormEvent } from "react"
+import React, { useEffect, useState, FormEvent, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import Navbar2 from "@/components/Navbar2"
 import FloatingIcons from "@/components/FloatingIcons"
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [mobileNo, setMobileNo] = useState("")
@@ -250,5 +250,14 @@ export default function LoginPage() {
 
       <FloatingIcons />
     </main>
+  )
+}
+
+// Export a Suspense-wrapped default page
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginContent />
+    </Suspense>
   )
 }
