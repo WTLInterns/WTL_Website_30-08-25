@@ -126,7 +126,7 @@ useEffect(() => {
 
   // Prefer env var, but also allow runtime overrides via localStorage for quick testing
   const runtimeKey = typeof window !== 'undefined' ? (localStorage.getItem('GMAPS_KEY') || "") : ""
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || runtimeKey || "AIzaSyAKjmBSUJ3XR8uD10vG2ptzqLJAZnOlzqI"
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || runtimeKey || "AIzaSyDuZC6kFobB0pnp-k3VcxQIjvb0EhgfnVI"
   const today = new Date().toISOString().split("T")[0]
 
   // Reset form to initial state

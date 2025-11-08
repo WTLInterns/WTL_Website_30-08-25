@@ -36,7 +36,7 @@ export default function GoogleMapsAutocomplete({ pickupId, dropId }: GoogleMapsA
         // Create new script loading promise
         scriptLoadingPromise = new Promise((resolve, reject) => {
           const script = document.createElement('script')
-          script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyAKjmBSUJ3XR8uD10vG2ptzqLJAZnOlzqIlibraries=places"
+          script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDuZC6kFobB0pnp-k3VcxQIjvb0EhgfnVIlibraries=places"
           script.async = true
 
           script.onload = () => {
