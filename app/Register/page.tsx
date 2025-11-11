@@ -230,7 +230,7 @@ function RegisterContent() {
   const handleGoogleSignup = () => {
     setIsGoogleLoading(true);
     // Redirect to backend Google OAuth endpoint
-    window.location.href = 'http://localhost:8085/auth/google/login';
+    window.location.href = 'https://api.worldtriplink.com/auth/google/login';
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -248,7 +248,7 @@ function RegisterContent() {
       setIsLoading(true);
       
       // API call to register user
-      const response = await fetch('http://localhost:8085/auth/register', {
+      const response = await fetch('https://api.worldtriplink.com/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

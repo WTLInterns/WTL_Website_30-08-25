@@ -5,19 +5,19 @@ import ContactClient from "././contactClient"
 export const metadata: Metadata = {
   title: "Contact Us | World Trip Link",
   description: "Get in touch with the World Trip Link team for travel bookings, inquiries, and support.",
-  metadataBase: new URL("http://localhost:8085"),
+  metadataBase: new URL("https://api.worldtriplink.com"),
   alternates: {
-    canonical: "http://localhost:8085/contact",
+    canonical: "https://api.worldtriplink.com/contact",
   },
   openGraph: {
     title: "Contact - World Trip Link",
     description: "Have questions or need help? Reach out to World Trip Link's support team.",
-    url: "http://localhost:8085/contact",
+    url: "https://api.worldtriplink.com/contact",
     siteName: "World Trip Link",
     type: "website",
     images: [
       {
-        url: "http://localhost:8085/images/og-image.jpg",
+        url: "https://api.worldtriplink.com/images/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Contact World Trip Link",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     description: "Reach out to us for support and travel inquiries.",
     site: "@worldtriplink",
     creator: "@worldtriplink",
-    images: ["http://localhost:8085/images/og-image.jpg"],
+    images: ["https://api.worldtriplink.com/images/og-image.jpg"],
   },
   robots: "index, follow",
 }

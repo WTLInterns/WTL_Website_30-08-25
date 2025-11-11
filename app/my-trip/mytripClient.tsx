@@ -95,7 +95,7 @@ export default function MyTripPage() {
           return;
         }
 
-        const response = await fetch(`http://localhost:8085/api/bookings/by-user/${id}`);
+        const response = await fetch(`https://api.worldtriplink.com/api/bookings/by-user/${id}`);
         
         if (!response.ok) {
           throw new Error(`Failed to fetch trips: ${response.status} ${response.statusText}`);

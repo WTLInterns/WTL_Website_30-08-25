@@ -73,7 +73,7 @@ function InvoiceContent() {
   // Car data loaded via URL parameters
   const [carData, setCarData] = useState<CarData>({
     cabId: searchParams.get("cabId") || "",
-    name: searchParams.get("name") || "",
+    name: searchParams.get("modelName") || searchParams.get("name") || "",
     image: searchParams.get("image") || "/images/sedan-premium.jpg",
     price: Number(searchParams.get("price")) || 0,
     features: searchParams.get("features")?.split(",") || [],
@@ -153,7 +153,7 @@ function InvoiceContent() {
   useEffect(() => {
     const fetchCoupons = async () => {
       try {
-        const base = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8085";
+        const base = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.worldtriplink.com";
         const res = await axios.get(`${base}/discount/getAll`);
         const items: DiscountDTO[] = res.data || [];
         const today = new Date();
@@ -350,7 +350,7 @@ function InvoiceContent() {
       return;
     }
     try {
-      const res = await fetch(`http://localhost:8085/discount/validate?code=${encodeURIComponent(couponCode.trim())}`);
+      const res = await fetch(`https://api.worldtriplink.com/discount/validate?code=${encodeURIComponent(couponCode.trim())}`);
       let data: any | null = null;
       if (!res.ok) {
         if (res.status === 410) {
@@ -359,7 +359,7 @@ function InvoiceContent() {
         }
         // Fallback: fetch all coupons and match locally (handles case/whitespace mismatches)
         try {
-          const la = await fetch("http://localhost:8085/discount/getAll");
+          const la = await fetch("https://api.worldtriplink.com/discount/getAll");
           if (la.ok) {
             const all = await la.json();
             const input = couponCode.trim().toUpperCase();
@@ -481,7 +481,7 @@ function InvoiceContent() {
     setIsSubmitting(true);
     try {
       const response = await fetch(
-        "http://localhost:8085/api/bookingConfirm",
+        "https://api.worldtriplink.com/api/bookingConfirm",
         {
           method: "POST",
           headers: {
@@ -529,7 +529,7 @@ function InvoiceContent() {
       cabId: carData.cabId,
       modelName: carData.name,
       modelType: carData.category,
-      seats: carData.category === "SUV" || carData.category === "muv" ? "6+1" : "4+1",
+      seats: carData.category === "Ertiga" || carData.category === "SUV" || carData.category === "muv" || carData.category === "MUV" ? "6+1" : "4+1",
       fuelType: "CNG-Diesel",
       availability: "Available",
       price: carData.price.toString(),
@@ -665,7 +665,7 @@ function InvoiceContent() {
     setIsSubmitting(true);
 
     try {
-      const orderResponse = await axios.post("http://localhost:8085/api/payments/create-razorpay-order", {
+      const orderResponse = await axios.post("https://api.worldtriplink.com/api/payments/create-razorpay-order", {
         amount: amountToPay,
       });
       
@@ -691,7 +691,7 @@ function InvoiceContent() {
             cabId: carData.cabId,
             modelName: carData.name,
             modelType: carData.category,
-            seats: carData.category === "SUV" || carData.category === "muv" ? "6+1" : "4+1",
+            seats: carData.category === "Ertiga" || carData.category === "SUV" || carData.category === "muv" || carData.category === "MUV" ? "6+1" : "4+1",
             fuelType: "CNG-Diesel",
             availability: "Available",
             price: carData.price.toString(),
@@ -959,7 +959,7 @@ function InvoiceContent() {
                     </div>
                   </div>
                   <div className="flex-grow">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-2">Dzire or Similar</h2>
+                    <h2 className="text-2xl font-bold text-gray-800 mb-2">{carData.name || "Car"}</h2>
                     <div className="flex items-center mb-4">
                       <div className="flex text-yellow-400">
                         {[...Array(5)].map((_, i) => (
@@ -975,7 +975,11 @@ function InvoiceContent() {
                         <svg className="w-6 h-6 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
-                        <span className="text-sm font-medium">4-seater</span>
+                        <span className="text-sm font-medium">
+                          {carData.category === "Ertiga" || carData.category === "SUV" || carData.category === "muv" || carData.category === "MUV" 
+                            ? "6+1 seater" 
+                            : "4+1 seater"}
+                        </span>
                       </div>
                       <div className="flex items-center bg-gray-50 p-3 rounded-lg">
                         <svg className="w-6 h-6 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1268,16 +1272,7 @@ function InvoiceContent() {
                   ></textarea>
                 </div>
                 <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    name="hasGST"
-                    checked={formData.hasGST}
-                    onChange={handleInputChange}
-                    className="h-5 w-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300"
-                  />
-                  <label className="ml-3 block text-gray-700">
-                    I have a GST number (optional)
-                  </label>
+                  
                 </div>
                 <div className="flex items-start">
                   <input
@@ -1569,7 +1564,25 @@ function InvoiceContent() {
                     </>
                   )}
                 </div>
-                <p className="text-sm text-gray-500 mt-3">Includes all taxes</p>
+                <div className="mt-4 space-y-3 text-sm">
+                  <div className="bg-amber-50 border-l-4 border-amber-400 p-3 rounded">
+                    <p className="font-semibold text-amber-800 mb-1">Tolls and Interstate Charges</p>
+                    <p className="text-amber-700">Extra charges apply – pay the driver directly based on your route</p>
+                  </div>
+
+                  <div className="bg-amber-50 border-l-4 border-amber-400 p-3 rounded">
+                    <p className="font-semibold text-amber-800 mb-1">Parking Charges</p>
+                    <p className="text-amber-700">Extra charges apply for paid parking</p>
+                  </div>
+
+                  <div className="bg-green-50 border-l-4 border-green-400 p-3 rounded">
+                    <p className="font-semibold text-green-800">✓ Includes all taxes</p>
+                  </div>
+                </div>
+
+
+
+
               </div>
 
               {/* Payment Options */}

@@ -67,7 +67,7 @@ function LoginContent() {
   const handleGoogleLogin = () => {
     setIsGoogleLoading(true)
     // Redirect to backend Google OAuth endpoint
-    window.location.href = 'http://localhost:8085/auth/google/login'
+    window.location.href = 'https://api.worldtriplink.com/auth/google/login'
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -80,7 +80,7 @@ function LoginContent() {
 
     try {
       setIsLoading(true)
-      const response = await fetch("http://localhost:8085/auth/login1", {
+      const response = await fetch("https://api.worldtriplink.com/auth/login1", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         // Backend expects 'mobile' not 'mobileNo'

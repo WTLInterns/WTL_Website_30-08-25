@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import { useState, useEffect, Suspense } from "react"
+import { useState, useEffect, useRef, Suspense } from "react"
 import Footer from "@/components/footer"
 import './custom-radio.css';
 
@@ -45,7 +45,7 @@ function Button({ children, className, onClick, type = 'button' }: ButtonProps) 
 
 interface CarType {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   image: string;
   priceKey: string;
   options?: string[];
@@ -127,6 +127,100 @@ function SearchResultsContent() {
   const [selectedSedanPremium, setSelectedSedanPremium] = useState("Honda City")
   const [selectedSedanPremiumImage, setSelectedSedanPremiumImage] = useState("/images/city.jpg")
 
+  const pickup = searchParams.get('pickup') || ''
+  const drop = searchParams.get('drop') || ''
+  const dateStr = searchParams.get('date') || ''
+  const timeStr = searchParams.get('time') || ''
+  const approxTime = (tripInfo?.estimatedTravelTime || tripInfo?.estimatedtime || tripInfo?.traveltime || tripInfo?.time || '') as string
+  const [routeDuration, setRouteDuration] = useState<string>("")
+  const belowMapImages = [
+    
+    '/images/generated-image (8).png',
+    '/images/generated-image (7).png',
+    '/images/generated-image (10).png',
+    '/images/generated-image (11).png',
+  ]
+  const [randomBelowImage, setRandomBelowImage] = useState<string>("")
+
+  const mapContainerRef = useRef<HTMLDivElement | null>(null)
+  const directionsRendererRef = useRef<any>(null)
+
+  const loadGoogleMaps = (apiKey: string) => {
+    return new Promise<void>((resolve) => {
+      if (typeof window !== 'undefined' && (window as any).google?.maps) {
+        resolve();
+        return;
+      }
+      const existing = document.querySelector("script[data-gmaps='true']") as HTMLScriptElement | null;
+      if (existing) {
+        existing.addEventListener('load', () => resolve());
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+      script.async = true;
+      script.defer = true;
+      script.setAttribute('data-gmaps', 'true');
+      script.onload = () => resolve();
+      document.head.appendChild(script);
+    });
+  }
+
+  useEffect(() => {
+    const initMap = async () => {
+      if (!pickup || !drop || !isClient || !mapContainerRef.current) return;
+      const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'AIzaSyDuZC6kFobB0pnp-k3VcxQIjvb0EhgfnVI'
+      await loadGoogleMaps(key);
+
+      const gmaps = (window as any).google.maps;
+
+      const map = new gmaps.Map(mapContainerRef.current, {
+        center: { lat: 19.0760, lng: 72.8777 },
+        zoom: 8,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: false,
+      });
+
+      const directionsService = new gmaps.DirectionsService();
+      const directionsRenderer = new gmaps.DirectionsRenderer({ suppressMarkers: false, preserveViewport: false });
+      directionsRenderer.setMap(map);
+      directionsRendererRef.current = directionsRenderer;
+
+      directionsService.route(
+        {
+          origin: pickup,
+          destination: drop,
+          travelMode: gmaps.TravelMode.DRIVING,
+        },
+        (result: any, status: string) => {
+          if (status === 'OK' && result) {
+            directionsRenderer.setDirections(result);
+            const leg = result.routes?.[0]?.legs?.[0];
+            const meters = leg?.distance?.value;
+            if (typeof meters === 'number') {
+              const km = Math.round(meters / 1000);
+              if (!distance || Math.abs(km - (distance || 0)) > 0) {
+                setDistance(km);
+              }
+            }
+            const durText = leg?.duration?.text;
+            if (durText) setRouteDuration(durText);
+          }
+        }
+      );
+    };
+
+    initMap();
+
+    return () => {
+      if (directionsRendererRef.current) {
+        directionsRendererRef.current.setMap(null);
+        directionsRendererRef.current = null;
+      }
+    };
+  }, [pickup, drop, isClient]);
+
   const suvImageMap: { [key: string]: string } = {
     "Innova": "/images/innova.jpg",
     "Kia Carens": "/images/kia 3.jpeg" // Updated path to actual Kia Carens image
@@ -142,6 +236,21 @@ function SearchResultsContent() {
   useEffect(() => {
     setIsClient(true)
   }, [])
+
+  // Pick a random image for the below-map placement on each refresh
+  useEffect(() => {
+    const idx = Math.floor(Math.random() * belowMapImages.length)
+    setRandomBelowImage(belowMapImages[idx])
+  }, [])
+
+  // Initialize distance from URL immediately for instant UI, API may override later
+  useEffect(() => {
+    const d = searchParams.get('distance')
+    if (d) {
+      const n = Number(d)
+      if (!Number.isNaN(n) && n > 0) setDistance(n)
+    }
+  }, [searchParams])
 
   const fetchCabDataPost = async () => {
     try {
@@ -159,7 +268,7 @@ function SearchResultsContent() {
   
       // 3. Make the request with identical Postman configuration
       const response = await axios.post(
-        'http://localhost:8085/api/cab1',
+        'https://api.worldtriplink.com/api/cab1',
         params.toString(),
         {
           // headers: {
@@ -277,7 +386,7 @@ function SearchResultsContent() {
 
   const hatchbackCars: Record<string, string> = {
     "Maruti Wagonr": "/images/wagonr.jpg",
-    "Toyota Glanza": "/images/glanza.jpg",
+    // "Toyota Glanza": "/images/glanza.jpg",
     "Celerio": "/images/celerio.png"
   };
 
@@ -330,7 +439,7 @@ function SearchResultsContent() {
       // subtitle: 'Compact Hatchback • Manual • Efficient',
       image: selectedCarImage,
       priceKey: 'hatchback',
-      options: ['Maruti Wagonr', 'Toyota Glanza', 'Celerio'],
+      options: ['Maruti Wagonr', 'Celerio'],
       renderOptions: (
         <div className="flex gap-4 mt-2 mb-4">
           {Object.entries(hatchbackCars).map(([name, img]) => (
@@ -480,11 +589,12 @@ function SearchResultsContent() {
     <div className="min-h-screen bg-[#F3F4F9]">
       <Navbar2 />
       <div className="container mx-auto px-4 pt-20 pb-8">
-        <div className="grid grid-cols-1 gap-6">
-          {/* Show SUV radio buttons above SUV cards if SUV category is selected */}
-          {selectedCategory === 'SUV' && carTypes['SUV'].renderOptions}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="md:col-span-2 space-y-6">
+            {/* Show SUV radio buttons above SUV cards if SUV category is selected */}
+            {selectedCategory === 'SUV' && carTypes['SUV'].renderOptions}
 
-          {displayedCars.map((car: Car, index) => {
+            {displayedCars.map((car: Car, index) => {
             const price = getLatestPrice(car.type);
             const carInfo = carTypes[car.type as keyof typeof carTypes];
             
@@ -656,6 +766,7 @@ function SearchResultsContent() {
                         const basePrice = tripInfo?.[priceKey] || 0;
 
                         let selectedImage = car.image;
+                        
                         if (car.type === "Hatchback") {
                           selectedImage = selectedCarImage;
                         } else if (car.type === "Sedan") {
@@ -697,6 +808,73 @@ function SearchResultsContent() {
               </div>
             );
           })}
+          </div>
+          <aside className="md:col-span-1">
+            <div className="bg-white rounded-xl overflow-hidden shadow-md md:sticky md:top-24">
+              <div className="p-4">
+                <div ref={mapContainerRef} className="w-full h-56 bg-gray-100 rounded mb-4"></div>
+                <h4 className="font-semibold mb-3">Your Transfer</h4>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="border rounded p-2">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="inline-block w-2 h-2 rounded-full bg-green-600"></span>
+                      <span className="font-medium">From</span>
+                    </div>
+                    <p className="text-gray-700 break-words">{pickup || '—'}</p>
+                  </div>
+                  <div className="border rounded p-2">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="inline-block w-2 h-2 rounded-full bg-red-600"></span>
+                      <span className="font-medium">To</span>
+                    </div>
+                    <p className="text-gray-700 break-words">{drop || '—'}</p>
+                  </div>
+                </div>
+                <div className="mt-3 space-y-2 text-sm text-gray-700">
+                  <div className="flex items-center gap-2">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3M3 11h18M5 19h14a2 2 0 002-2v-6H3v6a2 2 0 002 2z"/></svg>
+                    <span>{dateStr || '—'}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>{timeStr || '—'}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>{(routeDuration || approxTime) ? `${routeDuration || approxTime} Appx` : '—'}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                    <span>{distance != null ? `${distance} kms` : '—'}</span>
+                  </div>
+                </div>
+                {/* Trustpilot-style rating card */}
+                <div className="mt-4 bg-gray-100 rounded-lg p-3">
+                  <div className="text-xs text-gray-600 mb-2 text-center">Trustpilot</div>
+                  <div className="flex items-center justify-center gap-2 mb-1">
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className="w-8 h-8 rounded-md bg-emerald-500 flex items-center justify-center">
+                        <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.785 1.4 8.168L12 18.896 4.666 23.163l1.4-8.168L.132 9.21l8.2-1.192L12 .587z"/></svg>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="text-xs text-gray-600 text-center">Rated 4.8 (12,923 reviews)</div>
+                </div>
+
+                {randomBelowImage && (
+                  <div className="mt-4">
+                    <img
+                      src={randomBelowImage}
+                      alt="WTL promotional"
+                      className="w-full h-auto rounded-xl border border-gray-200"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          </aside>
+          
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">

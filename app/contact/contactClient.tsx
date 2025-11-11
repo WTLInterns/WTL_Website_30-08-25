@@ -97,7 +97,7 @@ const Contact = () => {
     setSubmitStatus({ type: '', message: '' });
 
     try {
-      const response = await fetch('http://localhost:8085/contacts/create-contact', {
+      const response = await fetch('https://api.worldtriplink.com/contacts/create-contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

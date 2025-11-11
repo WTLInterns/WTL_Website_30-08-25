@@ -4,7 +4,7 @@ export const metadata: Metadata = {
   title: 'Best Cab Service in Jalna | Pune to Jalna Cabs | WTL',
   description: 'Worldtriplink offers the best cab service in Jalna. Book Pune to Jalna cab services for a hassle-free, comfortable, and affordable travel experience.',
   alternates: {
-    canonical: 'http://localhost:8085/cities/Cab-Service-Jalna'
+    canonical: 'https://api.worldtriplink.com/cities/Cab-Service-Jalna'
   },
   authors: [{ name: 'Ashutosh' }],
   keywords: 'Best cab service in Jalna, Pune to Jalna cab service, cab service in Jalna, reliable taxi service in Jalna, affordable cab booking in Jalna, Worldtriplink cab services',

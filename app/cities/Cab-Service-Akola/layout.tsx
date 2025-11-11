@@ -4,7 +4,7 @@ export const metadata: Metadata = {
   title: 'Cab Service in Akola | Best Cab Service | Worldtriplink',
   description: 'Book the best cab service in Akola with Worldtriplink. Reliable, affordable, and hassle-free Pune to Akola cab services for a comfortable journey!',
   alternates: {
-    canonical: 'http://localhost:8085/cities/Cab-Service-Akola'
+    canonical: 'https://api.worldtriplink.com/cities/Cab-Service-Akola'
   },
   authors: [{ name: 'Ashutosh' }],
   keywords: 'cab service in Akola, best cab service in Akola, Pune to Akola cab services, reliable cabs in Akola, affordable taxi service in Akola, Akola cab booking',

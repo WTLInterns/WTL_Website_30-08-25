@@ -20,7 +20,7 @@ import Head from "next/head";
 {/* <Head>
 <title>Corporate Cab & Employee Transportation Services in Pune</title>
     <meta name="description" content="WTL Tourism Pvt. Ltd. offers reliable corporate cab services in Pune. Get safe, on-time employee transportation services tailored for your business needs."/>
-    <link rel="canonical" href="http://localhost:8085/corporate/Corporate-Cab-Service-Pune"/>
+    <link rel="canonical" href="https://api.worldtriplink.com/corporate/Corporate-Cab-Service-Pune"/>
     <meta name="author" content="WTL Tourism Pvt. Ltd."/>
     <meta name="keywords" content="corporate cab services in pune, corporate cab service in pune, corporate employee cab services in pune, corporate employee cab system in pune, uber cabs corporate office in pune, employee transportation services in pune, daily cab service in pune, corporate transport service"/>
     <meta name="robots" content="index, follow"/>
