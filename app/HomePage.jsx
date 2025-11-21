@@ -87,7 +87,7 @@ export default function HomePage() {
             {currentTab === "cabs" ? (
               <>
                 <Image
-                  src="/images/Sea, Sky And Frangipani, Wallpapers, Backdrop Background Image And Wallpaper for Free Download.jpg"
+                  src="/images/HomeImage.jpg"
                   alt="Cab Background"
                   fill
                   style={{ objectFit: "cover" }}
