@@ -268,12 +268,11 @@ export default function HyderabadCorporateCabServicePage() {
                   Our reputation rests on three pillars: <strong>affordability, safety, and reliability</strong>. With <strong>30+ personal cabs</strong>, shared and exclusive options, real time tracking, and eco friendly vehicles, WTL ensures that your employees commute with <strong>comfort and peace of mind</strong>.
                   </p>
                 </div>
-                <div className="w-full max-w-7xl mx-auto">
-              <div className="mb-8">
-              </div>               
               </div>
             </div>
-          </section>
+          </div>
+        </div>
+      </section>
 
       {/* Main Content */}
       <main className="bg-gray-50 w-full">
