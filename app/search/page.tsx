@@ -144,6 +144,7 @@ function SearchResultsContent() {
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
   const directionsRendererRef = useRef<any>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [mapDistance, setMapDistance] = useState<number | null>(null)
 
   const loadGoogleMaps = (apiKey: string) => {
     return new Promise<void>((resolve) => {
@@ -200,10 +201,10 @@ function SearchResultsContent() {
             const meters = leg?.distance?.value;
             if (typeof meters === 'number') {
               const km = Math.round(meters / 1000);
-              if (!distance || Math.abs(km - (distance || 0)) > 0) {
-                setDistance(km);
-              }
+              // Keep Google Maps distance separate from backend pricing distance
+              setMapDistance(km);
             }
+
             const durText = leg?.duration?.text;
             if (durText) setRouteDuration(durText);
           }
@@ -243,14 +244,8 @@ function SearchResultsContent() {
     setRandomBelowImage(belowMapImages[idx])
   }, [])
 
-  // Initialize distance from URL immediately for instant UI, API may override later
-  useEffect(() => {
-    const d = searchParams.get('distance')
-    if (d) {
-      const n = Number(d)
-      if (!Number.isNaN(n) && n > 0) setDistance(n)
-    }
-  }, [searchParams])
+  // NOTE: distance used for pricing and "km included" now comes only from backend API.
+  // Google Maps distance is stored separately in mapDistance and is shown only in the map card.
 
   const fetchCabDataPost = async () => {
     try {
@@ -316,7 +311,6 @@ function SearchResultsContent() {
 
     const fetchData = async () => {
       try {
-        setIsLoading(true)
         const data = await fetchCabDataPost();
         debugLog("API response:", data);
         
@@ -338,18 +332,16 @@ function SearchResultsContent() {
         }
       } catch (error) {
         console.error("Error fetching cab data:", error);
-      } finally {
-        setIsLoading(false)
       }
     };
 
     fetchData();
   }, [isClient, searchParams]);
 
-  const getLatestPrice = (carType: string): number => {
+  const getLatestPrice = (carType: string): number | null => {
     if (!tripInfo || typeof tripInfo !== 'object') {
       console.log('[getLatestPrice] tripInfo is missing or not an object:', tripInfo);
-      return 0;
+      return null;
     }
 
     try {
@@ -359,31 +351,32 @@ function SearchResultsContent() {
       // Get base price from API response based on car type
       switch(carType.toLowerCase()) {
         case 'hatchback':
-          basePrice = currentTripInfo?.hatchback || 0;
+          basePrice = currentTripInfo?.hatchback ?? 0;
           break;
         case 'sedan':
-          basePrice = currentTripInfo?.sedan || 0;
+          basePrice = currentTripInfo?.sedan ?? 0;
           break;
         case 'sedan premium':
-          basePrice = currentTripInfo?.sedanpremium || 0;
+          basePrice = currentTripInfo?.sedanpremium ?? 0;
           break;
         case 'suv':
-          basePrice = currentTripInfo?.suv || 0;
+          basePrice = currentTripInfo?.suv ?? 0;
           break;
         case 'muv':
-          basePrice = currentTripInfo?.suvplus || 0;
+          basePrice = currentTripInfo?.suvplus ?? 0;
           break;
         case 'ertiga':
-          basePrice = currentTripInfo?.ertiga || 0;
+          basePrice = currentTripInfo?.ertiga ?? 0;
           break;
       }
 
       // The API already provides the total price including days calculation for round trips
       console.log('[getLatestPrice] carType:', carType, 'basePrice:', basePrice);
-      return Math.round(basePrice);
+      const rounded = Math.round(basePrice);
+      return Number.isFinite(rounded) && rounded > 0 ? rounded : null;
     } catch (error) {
       console.error('Error calculating price:', error);
-      return 0;
+      return null;
     }
   }
 
@@ -597,41 +590,7 @@ function SearchResultsContent() {
             {/* Show SUV radio buttons above SUV cards if SUV category is selected */}
             {selectedCategory === 'SUV' && carTypes['SUV'].renderOptions}
 
-            {/* Skeleton while loading prices / trip info */}
-            {isLoading && (
-              <>
-                {[1, 2, 3].map((i) => (
-                  <div
-                    key={`skeleton-${i}`}
-                    className="bg-white rounded-xl overflow-hidden shadow-md animate-pulse"
-                  >
-                    <div className="flex flex-col md:flex-row">
-                      <div className="w-full md:w-2/5 h-64 bg-gray-200" />
-                      <div className="flex-1 p-6 space-y-4">
-                        <div className="flex justify-between items-center">
-                          <div className="space-y-2 w-2/3">
-                            <div className="h-5 bg-gray-200 rounded w-1/2" />
-                            <div className="h-4 bg-gray-200 rounded w-2/3" />
-                          </div>
-                          <div className="h-8 bg-gray-200 rounded w-20" />
-                        </div>
-                        <div className="grid grid-cols-3 gap-4">
-                          {[1, 2, 3].map((j) => (
-                            <div key={j} className="space-y-2">
-                              <div className="h-4 bg-gray-200 rounded w-1/2" />
-                              <div className="h-4 bg-gray-100 rounded w-3/4" />
-                            </div>
-                          ))}
-                        </div>
-                        <div className="h-9 bg-gray-200 rounded w-32" />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </>
-            )}
-
-            {!isLoading && displayedCars.map((car: Car, index) => {
+            {displayedCars.map((car: Car, index) => {
             const price = getLatestPrice(car.type);
             const carInfo = carTypes[car.type as keyof typeof carTypes];
             
@@ -650,7 +609,7 @@ function SearchResultsContent() {
                              car.type === "Ertiga" ? '/images/ertiga.jpg' :
                              car.image || '/images/Innova.png'}
                         alt={carInfo.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.src = '/images/Innova.png';
@@ -750,9 +709,13 @@ function SearchResultsContent() {
                       </div>
                       <div className="flex flex-col items-end ml-8">
                         <span className="text-green-600 text-xs mb-1">Limited Offer</span>
-                        <span className="inline-block bg-white text-black text-lg font-bold px-3 py-2 rounded shadow">
-                          {price > 0 ? `₹${price}` : 'Calculating price...'}
-                        </span>
+                        {price === null ? (
+                          <span className="inline-block bg-white text-gray-400 text-sm font-medium px-3 py-2 rounded shadow animate-pulse">
+                            Calculating price...
+                          </span>
+                        ) : (
+                          <span className="inline-block bg-white text-black text-lg font-bold px-3 py-2 rounded shadow">₹{price}</span>
+                        )}
                       </div>
                     </div>
 
@@ -764,7 +727,7 @@ function SearchResultsContent() {
                           </svg>
                           Distance
                         </div>
-                        <p className="text-sm">{distance || 149} km included</p>
+                        <p className="text-sm">{distance} km included</p>
                       </div>
                       <div>
                         <div className="flex items-center gap-2 text-gray-600">
@@ -794,8 +757,12 @@ function SearchResultsContent() {
                     </div>
 
                     <button
-                      className="w-full md:w-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      className={`w-full md:w-auto px-6 py-2 rounded-lg transition-colors ${price === null ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+                      disabled={price === null}
                       onClick={() => {
+                        if (price === null) {
+                          return;
+                        }
                         if (!distance) {
                           alert("Please select pickup and drop locations to get the final price");
                           return;
@@ -878,10 +845,10 @@ function SearchResultsContent() {
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     <span>{timeStr || '—'}</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  {/* <div className="flex items-center gap-2">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     <span>{(routeDuration || approxTime) ? `${routeDuration || approxTime} Appx` : '—'}</span>
-                  </div>
+                  </div> */}
                   <div className="flex items-center gap-2">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                     <span>{distance != null ? `${distance} kms` : '—'}</span>

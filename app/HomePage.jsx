@@ -164,7 +164,7 @@ export default function HomePage() {
           description="The city that never sleeps, financial capital of India"
           rating={5}
           reviews={12385}
-          imageSrc="/images/mumbai.jpg"
+          imageSrc="/images/mumbai air port.png"
           href="/cities/Cab-Service-Mumbai"
           subDestinations={["Hyderabad", "Bangalore", "Pune"]}
         />
@@ -217,7 +217,7 @@ export default function HomePage() {
           description="Cultural capital with perfect blend of tradition and modernity"
           rating={5}
           reviews={7064}
-          imageSrc="/images/pune.jpg"
+          imageSrc="/images/pune air port.png"
           href="/corporate/Corporate-Cab-Service-Pune"
           subDestinations={["Mumbai", "Goa", "Hampi"]}
         />
@@ -279,14 +279,6 @@ export default function HomePage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm p-3 sm:p-4 hover:shadow-md transition">
           <CabCard
-            type="Luxury"
-            description="Premium comfort and style"
-            imageSrc="/images/luxury-car.jpg"
-            onImageClick={handleImageClick}
-          />
-        </div>
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm p-3 sm:p-4 hover:shadow-md transition">
-          <CabCard
             type="Hatchback"
             description="Compact and efficient"
             imageSrc="/images/glanza.jpg"
@@ -298,6 +290,14 @@ export default function HomePage() {
             type="Sedan"
             description="Perfect balance of comfort"
             imageSrc="/images/aura.jpg"
+            onImageClick={handleImageClick}
+          />
+        </div>
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm p-3 sm:p-4 hover:shadow-md transition">
+          <CabCard
+            type="Luxury"
+            description="Premium comfort and style"
+            imageSrc="/images/luxury-car.jpg"
             onImageClick={handleImageClick}
           />
         </div>

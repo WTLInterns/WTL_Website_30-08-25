@@ -105,7 +105,8 @@ export default function FloatingIcons() {
 
   return (
     <>
-      <div className="fixed bottom-6 left-6 z-50">
+      {/* Call + Chatbot Icons (bottom-left) */}
+      <div className="fixed bottom-6 left-6 z-50 flex flex-col gap-4 items-start">
         <Link 
           href="tel:+919730545491"
           className="bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors flex items-center justify-center"
@@ -115,10 +116,8 @@ export default function FloatingIcons() {
             <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
           </svg>
         </Link>
-      </div>
-      
-      {/* Chatbot Icon */}
-      <div className="fixed bottom-24 right-6 z-50">
+
+        {/* Chatbot Icon */}
         <button
           onClick={() => setIsChatOpen(!isChatOpen)}
           className="bg-purple-600 text-white p-3 rounded-full shadow-lg hover:bg-purple-700 transition-colors flex items-center justify-center relative"
@@ -136,7 +135,7 @@ export default function FloatingIcons() {
       
       {/* Chatbot Interface */}
       {isChatOpen && (
-        <div className="fixed bottom-24 right-6 w-80 md:w-96 bg-white rounded-lg shadow-xl z-50 overflow-hidden border border-gray-200">
+        <div className="fixed bottom-24 left-6 w-80 md:w-96 bg-white rounded-lg shadow-xl z-50 overflow-hidden border border-gray-200">
           {/* Chat Header */}
           <div className="bg-purple-600 text-white p-3 flex justify-between items-center">
             <div className="flex items-center">
@@ -205,8 +204,23 @@ export default function FloatingIcons() {
         </div>
       )}
       
-      {/* WhatsApp Icon */}
-      <div className="fixed bottom-6 right-6 z-50">
+      {/* Play Store + WhatsApp Icons (bottom-right) */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-4 items-end">
+        {/* Play Store Icon */}
+        <Link 
+          href="https://play.google.com/store/apps/details?id=com.yourcompany.worldtriplink&hl=en"
+          target="_blank"
+          className="bg-white text-green-500 p-3 rounded-full shadow-lg hover:bg-gray-100 transition-colors flex items-center justify-center border border-gray-200"
+          aria-label="Get the app on Google Play"
+        >
+          <img
+            src="/images/play_store.jpg"
+            alt="Google Play"
+            className="w-6 h-6 object-contain"
+          />
+        </Link>
+
+        {/* WhatsApp Icon */}
         <Link 
           href="https://wa.me/919730545491" 
           target="_blank"
@@ -218,6 +232,7 @@ export default function FloatingIcons() {
           </svg>
         </Link>
       </div>
+
     </>
   )
 }
