@@ -91,6 +91,14 @@ function SearchResultsContent() {
       category: "Sedan Premium"
     },
     {
+      type: "Electric",
+      image: "/images/ev.jpg",
+      rating: 4.9,
+      reviews: 38,
+      features: ["4+1 Seater", "USB Charging", "Climate Control", "Premium Sound System", "Zero Emissions"],
+      category: "Electric"
+    },
+    {
       type: "Ertiga",
       image: "/images/ertiga.jpg",
       rating: 4.8, // Assuming similar rating to SUV
@@ -126,6 +134,7 @@ function SearchResultsContent() {
   const [selectedSUVImage, setSelectedSUVImage] = useState("/images/innova.jpg")
   const [selectedSedanPremium, setSelectedSedanPremium] = useState("Honda City")
   const [selectedSedanPremiumImage, setSelectedSedanPremiumImage] = useState("/images/city.jpg")
+  const [selectedElectric, setSelectedElectric] = useState("Tesla Model 3")
 
   const pickup = searchParams.get('pickup') || ''
   const drop = searchParams.get('drop') || ''
@@ -359,6 +368,9 @@ function SearchResultsContent() {
         case 'sedan premium':
           basePrice = currentTripInfo?.sedanpremium ?? 0;
           break;
+        case 'electric':
+          basePrice = currentTripInfo?.electric ?? 0;
+          break;
         case 'suv':
           basePrice = currentTripInfo?.suv ?? 0;
           break;
@@ -393,20 +405,14 @@ function SearchResultsContent() {
     "Toyota etios": "/images/etios.jpg"
   };
 
-  const suvCars: Record<string, string> = {
-    "Innova": "/images/innova.jpg",
-    "Kia Carens": "/images/kia 3.jpeg"
+  const electricCars: Record<string, string> = {
+    "Tesla Model 3": "/images/ev.jpg"
   };
 
   const sedanPremiumCars: Record<string, string> = {
     "Honda City": "/images/city.jpg",
     "Hyundai Verna": "/images/verna.jpg",
     "Maruti Ciaz": "/images/ciaz.jpg"
-  };
-
-  const handleCarChange = (carName: string) => {
-    setSelectedCar(carName);
-    setSelectedCarImage(hatchbackCars[carName]);
   };
 
   const handleSedanChange = (carName: string) => {
@@ -427,6 +433,15 @@ function SearchResultsContent() {
   const handleSedanPremiumChange = (carName: string) => {
     setSelectedSedanPremium(carName);
     setSelectedSedanPremiumImage(sedanPremiumCars[carName]);
+  };
+
+  const handleElectricChange = (carName: string) => {
+    setSelectedElectric(carName);
+  };
+
+  const handleCarChange = (carName: string) => {
+    setSelectedCar(carName);
+    setSelectedCarImage(hatchbackCars[carName]);
   };
 
   const carTypes: Record<string, CarType> = {
@@ -494,6 +509,30 @@ function SearchResultsContent() {
                 value={name}
                 checked={selectedSedanPremium === name}
                 onChange={() => handleSedanPremiumChange(name)}
+                className="custom-radio mr-1"
+              />
+              <span className="text-sm font-medium select-none">{name}</span>
+            </label>
+          ))}
+        </div>
+      )
+    },
+    'Electric': {
+      title: 'Electric',
+      // subtitle: 'Electric Vehicle • Automatic • Zero Emissions',
+      image: '/images/EVCAR.jpg',
+      priceKey: 'electric',
+      options: ['Tesla Model 3'],
+      renderOptions: (
+        <div className="flex gap-4 mt-2 mb-4">
+          {Object.entries(electricCars).map(([name, img]) => (
+            <label key={name} className="flex items-center cursor-pointer gap-2">
+              <input
+                type="radio"
+                name="electric-selection"
+                value={name}
+                checked={selectedElectric === name}
+                onChange={() => handleElectricChange(name)}
                 className="custom-radio mr-1"
               />
               <span className="text-sm font-medium select-none">{name}</span>
@@ -590,7 +629,7 @@ function SearchResultsContent() {
             {/* Show SUV radio buttons above SUV cards if SUV category is selected */}
             {selectedCategory === 'SUV' && carTypes['SUV'].renderOptions}
 
-            {displayedCars.map((car: Car, index) => {
+            {displayedCars.map((car: Car, index: number) => {
             const price = getLatestPrice(car.type);
             const carInfo = carTypes[car.type as keyof typeof carTypes];
             
@@ -610,7 +649,7 @@ function SearchResultsContent() {
                              car.image || '/images/Innova.png'}
                         alt={carInfo.title}
                         className="w-full h-full object-contain"
-                        onError={(e) => {
+                        onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                           const target = e.target as HTMLImageElement;
                           target.src = '/images/Innova.png';
                         }}
