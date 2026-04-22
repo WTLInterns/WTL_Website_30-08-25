@@ -10,7 +10,6 @@ import HotelBookingForm from "@/components/HotelBookingForm";
 import FlightBookingForm from "@/components/FlightBookingForm";
 import HomestaysBookingForm from "@/components/HomestaysBookingForm";
 import HolidayBookingForm from "@/components/HolidayBookingForm";
-import Script from "next/script";
 import FloatingIcons from "@/components/FloatingIcons"
 
 // Counter hook for animated numbers
@@ -148,18 +147,6 @@ export default function AhmednagarCabServicePage() {
   try {
     return (
       <>
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-BBVFRQHTM9"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-BBVFRQHTM9');
-          `}
-        </Script>
         <div className="min-h-screen bg-gray-50">
           
           {/* Hero Section with Background */}
