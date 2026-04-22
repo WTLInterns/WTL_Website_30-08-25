@@ -26,13 +26,10 @@
 //     </html>
 //   )
 // }
-
-
-
 // import './globals.css'
 
 
-import type React from "react";
+import type { ReactNode } from "react";
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -44,6 +41,9 @@ export const metadata = {
   title: "World Trip Link - Travel Booking",
   description: "Book cabs, buses and explore top destinations",
   generator: "v0.dev",
+  verification: {
+    google: "nooTES92rJXZ6TyoRfoRQ9skQ5tGbWRAfnGPiOByhbI",
+  },
   metadataBase: new URL("https://api.worldtriplink.com"),
   alternates: {
     canonical: "https://www.worldtriplink.com/cities/Cab-Service-Chandarpur",
@@ -53,7 +53,7 @@ export const metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
